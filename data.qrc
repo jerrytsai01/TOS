@@ -31,5 +31,15 @@
         <file>dataset/character/ID4.png</file>
         <file>dataset/character/ID5.png</file>
         <file>dataset/bullet.png</file>
+        <file>dataset/battle_bg.png</file>
+        <file>dataset/cd_bar.png</file>
+        <file>dataset/cd_icon.png</file>
+        <file>dataset/charac slot.jpg</file>
+        <file>dataset/cursur.png</file>
+        <file>dataset/darken.png</file>
+        <file>dataset/hp_bar.png</file>
+        <file>dataset/hp_icon.png</file>
+        <file>dataset/runestone_bg.png</file>
+        <file>dataset/start button.jpg</file>
     </qresource>
 </RCC>
