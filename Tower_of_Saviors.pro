@@ -14,6 +14,7 @@ SOURCES += \
     stone.cpp
 
 HEADERS += \
+    attribute.h \
     mainwindow.h \
     stone.h
 
