@@ -2,11 +2,11 @@
 #define ATTRIBUTE_H
 
 enum class Attribute :int {
-    Fire=0,
-    Water=1,
-    Earth=2,
-    Light=3,
-    Dark=4,
-    Heal=5
+    Fire=1,
+    Water=2,
+    Earth=3,
+    Light=4,
+    Dark=5,
+    Heal=6
 };
 #endif // ATTRIBUTE_H

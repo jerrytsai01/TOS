@@ -21,19 +21,19 @@ void stone::skin(int type, bool weather, bool burn)
 {
     if(weather){
         switch (type) {
-        case 0:
+        case 1:
             setPixmap(QPixmap(":/new/prefix1/dataset/runestone/weathered_fire_stone.png"));
             break;
-        case 1:
+        case 2:
             setPixmap(QPixmap(":/new/prefix1/dataset/runestone/weathered_water_stone.png"));
             break;
-        case 2:
+        case 3:
             setPixmap(QPixmap(":/new/prefix1/dataset/runestone/weathered_earth_stone.png"));
             break;
-        case 3:
+        case 4:
             setPixmap(QPixmap(":/new/prefix1/dataset/runestone/weathered_light_stone.png"));
             break;
-        case 4:
+        case 5:
             setPixmap(QPixmap(":/new/prefix1/dataset/runestone/weathered_dark_stone.png"));
             break;
         default:
@@ -43,19 +43,19 @@ void stone::skin(int type, bool weather, bool burn)
     }
     else if(burn){
         switch (type) {
-        case 0:
+        case 1:
             setPixmap(QPixmap(":/new/prefix1/dataset/runestone/burning_fire_stone.png"));
             break;
-        case 1:
+        case 2:
             setPixmap(QPixmap(":/new/prefix1/dataset/runestone/burning_water_stone.png"));
             break;
-        case 2:
+        case 3:
             setPixmap(QPixmap(":/new/prefix1/dataset/runestone/burning_earth_stone.png"));
             break;
-        case 3:
+        case 4:
             setPixmap(QPixmap(":/new/prefix1/dataset/runestone/burning_light_stone.png"));
             break;
-        case 4:
+        case 5:
             setPixmap(QPixmap(":/new/prefix1/dataset/runestone/burning_dark_stone.png"));
             break;
         default:
@@ -65,19 +65,19 @@ void stone::skin(int type, bool weather, bool burn)
     }
     else{
         switch (type) {
-        case 0:
+        case 1:
             setPixmap(QPixmap(":/new/prefix1/dataset/runestone/fire_stone.png"));
             break;
-        case 1:
+        case 2:
             setPixmap(QPixmap(":/new/prefix1/dataset/runestone/water_stone.png"));
             break;
-        case 2:
+        case 3:
             setPixmap(QPixmap(":/new/prefix1/dataset/runestone/earth_stone.png"));
             break;
-        case 3:
+        case 4:
             setPixmap(QPixmap(":/new/prefix1/dataset/runestone/light_stone.png"));
             break;
-        case 4:
+        case 5:
             setPixmap(QPixmap(":/new/prefix1/dataset/runestone/dark_stone.png"));
             break;
         default:
@@ -86,3 +86,4 @@ void stone::skin(int type, bool weather, bool burn)
         }
     }
 }
+
