@@ -23,7 +23,7 @@ public:
 
 private slots:
     void erasestone();
-
+    void handleStoneMove(QPointF newGirdPos, QPointF oldGridPos);
 private:
     QGraphicsScene *scene = new QGraphicsScene();
     QGraphicsView *view = new QGraphicsView(scene);

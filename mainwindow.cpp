@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "stone.h"
+#include "math.h"
 #include <QGraphicsPixmapItem>
 #include <QScrollBar>
 #include <QTimer>
@@ -77,6 +78,7 @@ void MainWindow::addStone()
             if(F[y][x] == false){
                 int type = rand()%6+1;
                 stone *Stone = new stone(type, x*a, y*a+510);
+                connect(Stone, &stone::stoneMoved, this, &MainWindow::handleStoneMove);
                 temps.push_back(Stone);
                 //savestone[y][x]=Stone;
                 stonepos[y][x]=type;
@@ -86,6 +88,46 @@ void MainWindow::addStone()
         }
         savestone.push_back(temps);
 
+    }
+}
+
+void MainWindow::handleStoneMove(QPointF newGridPos, QPointF oldGridPos) {
+    qDebug() << "Stone Grid positions moved from " << oldGridPos << " to " << newGridPos;
+    // Convert grid positions to pixel positions for QRectF
+    QRectF newRect(newGridPos.x(), newGridPos.y(), 90, 90);
+    QList<QGraphicsItem *> newItems = scene->items(newRect);
+
+    // Check if stone items exist at the new position
+    if (!newItems.isEmpty()) {
+        qDebug() << "Number of items at new position:" << newItems.size();
+        for (int i = 0; i < newItems.size(); ++i) {
+            qDebug() << "Checking item type at index" << i << ":" << newItems[i]->type();
+            // Check if the item is of type stone by using typeid
+            if (typeid(*newItems[i]) == typeid(stone)) {
+                qDebug() << "Found stone at new position";
+                // Cast the item to a stone object
+                stone *newStone = static_cast<stone *>(newItems[i]);
+                if (newStone) {
+                    qDebug() << "Stone cast successful. Moving new stone.";
+                    // Move the new stone to the old position
+                    newStone->setPos(oldGridPos.x(), oldGridPos.y());
+                    qDebug() << "New stone moved to old position.";
+
+                    int oldY = floor((oldGridPos.y()-510)/90);
+                    int oldX = floor(oldGridPos.x()/90);
+                    int newY = floor((newGridPos.y()-510)/90);
+                    int newX = floor(newGridPos.x()/90);
+                    std::swap(F[oldY][oldX], F[newY][newX]);
+                    qDebug() << "Swapped grid positions in array";
+
+                    return; // Once we've handled the first stone, we can exit the loop
+                } else {
+                    qDebug() << "Failed to cast to stone.";
+                }
+            }
+        }
+    } else {
+        qDebug() << "No items found at the new position.";
     }
 }
 
@@ -112,6 +154,7 @@ void MainWindow::find(int inx,int iny,int del,int type){
 }
 
 void MainWindow::erasestone(){
+    qDebug() << "erase";
     //x line
     for(int y=0;y<5;y++){
         for(int x=0;x<4;x++){
