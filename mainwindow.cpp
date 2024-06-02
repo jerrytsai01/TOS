@@ -118,6 +118,8 @@ void MainWindow::handleStoneMove(QPointF newGridPos, QPointF oldGridPos) {
                     int newY = floor((newGridPos.y()-510)/90);
                     int newX = floor(newGridPos.x()/90);
                     std::swap(F[oldY][oldX], F[newY][newX]);
+                    std::swap(savestone[oldY][oldX], savestone[newY][newX]);
+                    std::swap(stonepos[oldY][oldX], stonepos[newY][newX]);
                     qDebug() << "Swapped grid positions in array";
 
                     return; // Once we've handled the first stone, we can exit the loop
