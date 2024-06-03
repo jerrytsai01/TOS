@@ -63,9 +63,17 @@ MainWindow::MainWindow(QWidget *parent)
     showcombo->setPos(200,500);
     scene->addItem(showcombo);
 
+
     //each round
     erasestone();
     fall();
+    // initialize timerRect
+    timeStripBack = new QGraphicsRectItem(0, 500, 530, 20);
+    timeStrip = new QGraphicsRectItem(0, 500, 530, 20);
+    timeStrip->setBrush(Qt::green);
+    timeStripBack->setBrush(Qt::black);
+    scene->addItem(timeStripBack);
+    scene->addItem(timeStrip);
 }
 
 void MainWindow::addStone()
@@ -80,57 +88,38 @@ void MainWindow::addStone()
                 int type = rand()%6+1;
                 stone *Stone = new stone(type, x*a, y*a+510);
                 connect(Stone, &stone::stoneMoved, this, &MainWindow::handleStoneMove);
+                connect(Stone, &stone::updateTimer, this, &MainWindow::updateTimerStrip);
                 temps.push_back(Stone);
                 //savestone[y][x]=Stone;
                 stonepos[y][x]=type;
                 scene->addItem(Stone);
                 F[y][x] = true;
             }
+
         }
         savestone.push_back(temps);
     }
 }
-
+void MainWindow::updateTimerStrip(int remainingTime) {
+    // 计算剩余时间的比例
+    float remainingTimeFraction = static_cast<float>(remainingTime) / 1000.0f;
+    qDebug() << remainingTimeFraction <<" " <<remainingTime;
+    // 更新计时器矩形的宽度
+    timeStrip->setRect(0, 500, 540 * remainingTimeFraction, 20);
+}
 void MainWindow::handleStoneMove(QPointF newGridPos, QPointF oldGridPos) {
+    int oldY = floor((oldGridPos.y()-510)/90);
+    int oldX = floor(oldGridPos.x()/90);
+    int newY = floor((newGridPos.y()-510)/90);
+    int newX = floor(newGridPos.x()/90);
     qDebug() << "Stone Grid positions moved from " << oldGridPos << " to " << newGridPos;
-    // Convert grid positions to pixel positions for QRectF
-    QRectF newRect(newGridPos.x(), newGridPos.y(), 90, 90);
-    QList<QGraphicsItem *> newItems = scene->items(newRect);
-
-    // Check if stone items exist at the new position
-    if (!newItems.isEmpty()) {
-        qDebug() << "Number of items at new position:" << newItems.size();
-        for (int i = 0; i < newItems.size(); ++i) {
-            qDebug() << "Checking item type at index" << i << ":" << newItems[i]->type();
-            // Check if the item is of type stone by using typeid
-            if (typeid(*newItems[i]) == typeid(stone)) {
-                qDebug() << "Found stone at new position";
-                // Cast the item to a stone object
-                stone *newStone = static_cast<stone *>(newItems[i]);
-                if (newStone) {
-                    qDebug() << "Stone cast successful. Moving new stone.";
-                    // Move the new stone to the old position
-                    newStone->setPos(oldGridPos.x(), oldGridPos.y());
-                    qDebug() << "New stone moved to old position.";
-
-                    int oldY = floor((oldGridPos.y()-510)/90);
-                    int oldX = floor(oldGridPos.x()/90);
-                    int newY = floor((newGridPos.y()-510)/90);
-                    int newX = floor(newGridPos.x()/90);
-                    std::swap(F[oldY][oldX], F[newY][newX]);
-                    std::swap(savestone[oldY][oldX], savestone[newY][newX]);
-                    std::swap(stonepos[oldY][oldX], stonepos[newY][newX]);
-                    qDebug() << "Swapped grid positions in array";
-
-                    return; // Once we've handled the first stone, we can exit the loop
-                } else {
-                    qDebug() << "Failed to cast to stone.";
-                }
-            }
-        }
-    } else {
-        qDebug() << "No items found at the new position.";
-    }
+    qDebug() << "Stone positions moved from (" << oldX << "," << oldY << ") to (" << newX << "," << newY << ")";
+    //std::swap(F[oldY][oldX], F[newY][newX]);
+    //savestone[oldY][oldX]->setPos(newGridPos);
+    savestone[newY][newX]->setPos(oldGridPos);
+    std::swap(savestone[oldY][oldX], savestone[newY][newX]);
+    std::swap(stonepos[oldY][oldX], stonepos[newY][newX]);
+    qDebug() << "Swapped grid positions in array";
 }
 
 void MainWindow::find(int inx,int iny,int del,int type){

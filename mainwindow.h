@@ -20,7 +20,7 @@ public:
     MainWindow(QWidget *parent = nullptr);
     void addStone();
     void find(int inx,int iny,int del,int type);
-
+    void updateTimerStrip(int remainingTime) ;
 private slots:
     void erasestone();
     void handleStoneMove(QPointF newGirdPos, QPointF oldGridPos);
@@ -35,10 +35,12 @@ private:
     vector<vector<int>> iffinded;              //有無查找過
     vector<vector<int>> waitdelete;             //消除順序
     vector<vector<int>> counterasestone;        //有三連符石
-    int erasestonenum[6];                      //各屬性符石消除數量
+    int erasestonenum[6];                    //各屬性符石消除數量
     int combo;
     QString combotext;
     QGraphicsTextItem *showcombo;
+    QGraphicsRectItem *timeStrip;
+    QGraphicsRectItem *timeStripBack;
     int a=90;
 };
 #endif // MAINWINDOW_H

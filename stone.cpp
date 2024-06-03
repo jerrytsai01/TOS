@@ -13,8 +13,8 @@ stone::stone(int type, int X, int Y, QObject *parent)
     setPos(X,Y);
     skin(type, weather, burn);
     pressTimer = new QTimer(this);
-    pressTimer->setInterval(10000); // Set timer interval, e.g., 2000 milliseconds (2 seconds)
-    connect(pressTimer, SIGNAL(timeout()), this, SLOT(mouseMoveEvent()));
+    pressTimer->setInterval(totalTime); // Set timer interval, e.g., 2000 milliseconds (2 seconds)
+    connect(pressTimer, SIGNAL(timeout()), this, SLOT(emitTimer()));
 }
 
 // 获取符石类型的方法实现
@@ -28,12 +28,14 @@ int stone::getTypeAsInt() const {
 }
 // mouse event
 void stone::mousePressEvent(QGraphicsSceneMouseEvent *event) {
+    if(!pressed)
+    pressTimeCount = 0;
     pressed = true;
     oldGridPos.setX(floor(pos().x() / 90) * 90);
     oldGridPos.setY(510 + floor((pos().y() - 510) / 90) * 90);
-    mousePoint = event->scenePos(); // Use scenePos to get coordinates relative to the scene
+    mousePoint = event->scenePos();
     //qDebug() << "Mouse Pressed at Scene Position:" << mousePoint;
-    pressTimer->start(10); // Start the timer
+    pressTimer->start(10);
 }
 void stone::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
     pressed = false;
@@ -44,14 +46,23 @@ void stone::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
     int newY = 510 + qRound((pos().y() - 510) / 90) * 90 + 45; // Round to the nearest multiple of 90 (grid size) and add offset for center
     setPos(newX - 45, newY - 45); // Update stone position to the center of the grid
     //qDebug() << "Stone dropped at:" << QPointF(newX, newY);
-
     QGraphicsItem::mouseReleaseEvent(event); // Call the base class implementation
+}
 
+void stone::emitTimer()
+{
+    // Emit signal to update the timer rectangle
+    emit updateTimer(totalTime - pressTimeCount);
 }
 void stone::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
+
     pressTimeCount++;
+    // Update the width of the timer rectangle
     if (pressed and pressTimeCount <= 1000) {
         QPointF newPos = event->scenePos(); // Get new mouse position
+        if(event->scenePos().y() <= 510){
+            newPos.setY(510);
+        }
         if(event->scenePos().x() <= 0){
             newPos.setX(45);
         }
@@ -70,6 +81,7 @@ void stone::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
             emit stoneMoved(newGridPos, oldGridPos);
             oldGridPos = newGridPos;
         }
+
     }
     else{
         pressed = false;
@@ -80,7 +92,6 @@ void stone::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
         int newY = 510 + floor((pos().y() - 510) / 90) * 90 + 45; // Round to the nearest multiple of 90 (grid size) and add offset for center
         setPos(newX - 45, newY - 45); // Update stone position to the center of the grid
         //qDebug() << "Stone dropped at:" << QPointF(newX, newY);
-
         QGraphicsItem::mouseReleaseEvent(event); // Call the base class implementation
 
     }
@@ -154,4 +165,5 @@ void stone::skin(int type, bool weather, bool burn)
         }
     }
 }
+
 

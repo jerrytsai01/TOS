@@ -1,6 +1,7 @@
 #ifndef STONE_H
 #define STONE_H
 #include <QGraphicsPixmapItem>
+#include <QGraphicsRectItem>
 #include <QObject>
 #include <QGraphicsView>
 #include "attribute.h"
@@ -14,18 +15,21 @@ public:
     int getTypeAsInt() const;
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *reEvent);
+    void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
     void skin(int type,bool weather, bool burn);
     bool weather = false, burn = false;
 signals:
     void stoneMoved(QPointF newGirdPos, QPointF oldGridPos);
+    void updateTimer(int remainingTime);
 public slots:
-    void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
+    void emitTimer();
 private:
     Attribute type = getType();
     bool pressed = false;
     QTimer *pressTimer;
     int pressTimeCount = 0;
     QPointF mousePoint, originalPos, newGridPos, oldGridPos;
+    int const totalTime = 1000;
 };
 
 #endif // STONE_H
