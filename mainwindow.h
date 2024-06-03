@@ -24,6 +24,7 @@ public:
 private slots:
     void erasestone();
     void handleStoneMove(QPointF newGirdPos, QPointF oldGridPos);
+    void fall();
 private:
     QGraphicsScene *scene = new QGraphicsScene();
     QGraphicsView *view = new QGraphicsView(scene);
@@ -38,5 +39,6 @@ private:
     int combo;
     QString combotext;
     QGraphicsTextItem *showcombo;
+    int a=90;
 };
 #endif // MAINWINDOW_H

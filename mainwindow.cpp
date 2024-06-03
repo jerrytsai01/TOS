@@ -65,12 +65,13 @@ MainWindow::MainWindow(QWidget *parent)
 
     //each round
     erasestone();
+    fall();
 }
 
 void MainWindow::addStone()
 {
     srand(time(NULL));
-    int a = 90;
+
 
     for(int y=0;y<5;y++){
         vector<stone*> temps;
@@ -87,7 +88,6 @@ void MainWindow::addStone()
             }
         }
         savestone.push_back(temps);
-
     }
 }
 
@@ -189,7 +189,7 @@ void MainWindow::erasestone(){
     for(int y=0;y<5;y++){
         for(int x=0;x<6;x++){
             if(counterasestone[y][x]!=0){
-                erasestonenum[counterasestone[y][x]]++;
+                erasestonenum[counterasestone[y][x]-1]++;
             }
             if(iffinded[y][x]){
                 combo++;
@@ -203,14 +203,14 @@ void MainWindow::erasestone(){
     //erase animation
     QTimer *timer = new QTimer(this);
     int count = 0;
-
     connect(timer, &QTimer::timeout, this, [=]() mutable {
         count++;
         for(int y=0;y<5;y++){
             for(int x=0;x<6;x++){
                 if(waitdelete[y][x]==count){
                     delete savestone[y][x];
-                     qDebug()<<"delete x:"<<x<<" y:"<<y;
+                    stonepos[y][x]=0;
+                    qDebug()<<"delete x:"<<x<<" y:"<<y;
                     qDebug()<<combo;
                 }
             }
@@ -223,4 +223,24 @@ void MainWindow::erasestone(){
 
 }
 
+void MainWindow::fall(){
+    for(int y=4;y>0;y--){
+        for(int x=0;x<6;x++){
+            if(savestone[y][x]==nullptr and savestone[y-1][x]!=nullptr and y>0){
+                swap(savestone[y][x],savestone[y-1][x]);
+                swap(stonepos[y][x],stonepos[y-1][x]);
+                QTimer *timer = new QTimer(this);
+                int count = 0;
+                connect(timer, &QTimer::timeout, this, [=]() mutable {
+                    count++;
+                    savestone[y][x]->setPos( x*a, y*a+510+count*10);
+                    qDebug()<<"fall"<<count;
+                    if(count==5)
+                        timer->stop();
+                });
+                timer->start(10);
 
+            }
+        }
+    }
+}
