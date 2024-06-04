@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 #include "stone.h"
 #include "math.h"
+#include "hpbar.h"
+#include "cdbar.h"
 #include <QGraphicsPixmapItem>
 #include <QScrollBar>
 #include <QTimer>
@@ -62,25 +64,21 @@ MainWindow::MainWindow(QWidget *parent)
     showcombo = new QGraphicsTextItem();
     showcombo->setPos(200,500);
     scene->addItem(showcombo);
-
-
-    //each round
+/*
+    HPbar *hpbar = new HPbar;
+    scene->addItem(hpbar);
+    QPixmap icon_p(":/new/prefix1/dataset/hp_icon.png");
+    QGraphicsPixmapItem *icon = new QGraphicsPixmapItem(icon_p);
+    icon->setPos(0,460);
+    scene->addItem(icon);
+*/
     erasestone();
     fall();
-    // initialize timerRect
-    timeStripBack = new QGraphicsRectItem(0, 500, 530, 20);
-    timeStrip = new QGraphicsRectItem(0, 500, 530, 20);
-    timeStrip->setBrush(Qt::green);
-    timeStripBack->setBrush(Qt::black);
-    scene->addItem(timeStripBack);
-    scene->addItem(timeStrip);
 }
 
 void MainWindow::addStone()
 {
     srand(time(NULL));
-
-
     for(int y=0;y<5;y++){
         vector<stone*> temps;
         for(int x=0;x<6;x++){
@@ -89,6 +87,7 @@ void MainWindow::addStone()
                 stone *Stone = new stone(type, x*a, y*a+510);
                 connect(Stone, &stone::stoneMoved, this, &MainWindow::handleStoneMove);
                 connect(Stone, &stone::updateTimer, this, &MainWindow::updateTimerStrip);
+                connect(Stone, &stone::CDover, this, &MainWindow::CDoverEvent);
                 temps.push_back(Stone);
                 //savestone[y][x]=Stone;
                 stonepos[y][x]=type;
@@ -105,7 +104,21 @@ void MainWindow::updateTimerStrip(int remainingTime) {
     float remainingTimeFraction = static_cast<float>(remainingTime) / 1000.0f;
     qDebug() << remainingTimeFraction <<" " <<remainingTime;
     // 更新计时器矩形的宽度
-    timeStrip->setRect(0, 500, 540 * remainingTimeFraction, 20);
+    cdbar = new CDbar(remainingTimeFraction);
+    scene->addItem(cdbar);
+    QPixmap icon_p(":/new/prefix1/dataset/cd_icon.png");
+    cdIcon = new QGraphicsPixmapItem(icon_p);
+    cdIcon->setPos(0,460);
+    scene->addItem(cdIcon);
+}
+
+void MainWindow::CDoverEvent()
+{
+    qDebug() <<"end";
+    cdbar->setVisible(false);
+    cdIcon->setVisible(false);
+    //erasestone();
+    //fall();
 }
 void MainWindow::handleStoneMove(QPointF newGridPos, QPointF oldGridPos) {
     int oldY = floor((oldGridPos.y()-510)/90);

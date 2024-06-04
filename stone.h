@@ -21,6 +21,7 @@ public:
 signals:
     void stoneMoved(QPointF newGirdPos, QPointF oldGridPos);
     void updateTimer(int remainingTime);
+    void CDover();
 public slots:
     void emitTimer();
 private:

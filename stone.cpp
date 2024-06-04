@@ -28,8 +28,7 @@ int stone::getTypeAsInt() const {
 }
 // mouse event
 void stone::mousePressEvent(QGraphicsSceneMouseEvent *event) {
-    if(!pressed)
-    pressTimeCount = 0;
+
     pressed = true;
     oldGridPos.setX(floor(pos().x() / 90) * 90);
     oldGridPos.setY(510 + floor((pos().y() - 510) / 90) * 90);
@@ -40,6 +39,7 @@ void stone::mousePressEvent(QGraphicsSceneMouseEvent *event) {
 void stone::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
     pressed = false;
     pressTimer->stop(); // Stop the timer
+    emit CDover();
     //qDebug() <<"Release";
     // Calculate the grid position for the stone
     int newX = qRound(pos().x() / 90) * 90 + 45; // Round to the nearest multiple of 90 (grid size) and add offset for center
@@ -50,13 +50,15 @@ void stone::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
 }
 
 void stone::emitTimer()
-{
+{    if(!pressed)
+        pressTimeCount = 0;
+    else{
+        pressTimeCount++;
+    }
     // Emit signal to update the timer rectangle
     emit updateTimer(totalTime - pressTimeCount);
 }
 void stone::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
-
-    pressTimeCount++;
     // Update the width of the timer rectangle
     if (pressed and pressTimeCount <= 1000) {
         QPointF newPos = event->scenePos(); // Get new mouse position
@@ -87,6 +89,7 @@ void stone::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
         pressed = false;
         pressTimer->stop();
         qDebug() << "Drag time limit reached. Stopping drag.";
+        emit CDover();
         // Calculate the grid position for the stone
         int newX = floor(pos().x() / 90) * 90 + 45; // Round to the nearest multiple of 90 (grid size) and add offset for center
         int newY = 510 + floor((pos().y() - 510) / 90) * 90 + 45; // Round to the nearest multiple of 90 (grid size) and add offset for center

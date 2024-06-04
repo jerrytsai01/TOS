@@ -6,6 +6,8 @@
 #include <vector>
 #include <QString>
 #include "stone.h"
+#include "hpbar.h"
+#include "cdbar.h"
 
 using namespace std;
 /*QT_BEGIN_NAMESPACE
@@ -20,11 +22,13 @@ public:
     MainWindow(QWidget *parent = nullptr);
     void addStone();
     void find(int inx,int iny,int del,int type);
-    void updateTimerStrip(int remainingTime) ;
+    int HP = 2000;
 private slots:
     void erasestone();
     void handleStoneMove(QPointF newGirdPos, QPointF oldGridPos);
     void fall();
+    void updateTimerStrip(int remainingTime);
+    void CDoverEvent();
 private:
     QGraphicsScene *scene = new QGraphicsScene();
     QGraphicsView *view = new QGraphicsView(scene);
@@ -39,8 +43,9 @@ private:
     int combo;
     QString combotext;
     QGraphicsTextItem *showcombo;
-    QGraphicsRectItem *timeStrip;
-    QGraphicsRectItem *timeStripBack;
     int a=90;
+    CDbar *cdbar;
+    HPbar *hpbar;
+    QGraphicsPixmapItem *cdIcon;
 };
 #endif // MAINWINDOW_H
