@@ -16,7 +16,7 @@ public:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *reEvent);
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
-    void skin(int type,bool weather, bool burn);
+    void skin(int type, bool weather, bool burn);
     bool weather = false, burn = false;
 signals:
     void stoneMoved(QPointF newGirdPos, QPointF oldGridPos);

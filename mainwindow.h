@@ -8,6 +8,7 @@
 #include "stone.h"
 #include "hpbar.h"
 #include "cdbar.h"
+#include "slime.h"
 
 using namespace std;
 /*QT_BEGIN_NAMESPACE
@@ -22,6 +23,7 @@ public:
     MainWindow(QWidget *parent = nullptr);
     void addStone();
     void find(int inx,int iny,int del,int type);
+    void addEnemy();
     int HP = 2000;
 private slots:
     void erasestone();
@@ -47,5 +49,6 @@ private:
     CDbar *cdbar;
     HPbar *hpbar;
     QGraphicsPixmapItem *cdIcon;
+    int gamephase = 1;
 };
 #endif // MAINWINDOW_H

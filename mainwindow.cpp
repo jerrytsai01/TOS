@@ -3,7 +3,11 @@
 #include "math.h"
 #include "hpbar.h"
 #include "cdbar.h"
+#include "slime.h"
+#include "babyhoneymon.h"
+#include "cerberus.h"
 #include <QGraphicsPixmapItem>
+#include <QGraphicsItem>
 #include <QScrollBar>
 #include <QTimer>
 #include <QDebug>
@@ -12,6 +16,8 @@
 #include <QString>
 #include <stdlib.h> /* 亂數相關函數 */
 #include <time.h>   /* 時間相關函數 */
+
+using namespace std;
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -246,3 +252,25 @@ void MainWindow::fall(){
         }
     }
 }
+
+void MainWindow::addEnemy(){
+    if(gamephase == 1){
+        vector<tuple<int, int, int>> slimeInitValues = {
+            {1, 100, 200},
+            {3, 150, 200},
+            {2, 200, 200}
+        };
+        for (const auto& [attr, x, y] : slimeInitValues) {
+            slime* Slime = new slime(attr, x, y);
+            scene->addItem(Slime);
+        }
+    }
+
+    babyhoneymon *Babyhoneymon = new babyhoneymon(150, 200);
+    scene->addItem(Babyhoneymon);
+
+    cerberus *Cerberus = new cerberus(200, 200);
+    scene->addItem(Cerberus);
+}
+
+

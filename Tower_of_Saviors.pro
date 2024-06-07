@@ -9,17 +9,23 @@ CONFIG += c++11
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    babyhoneymon.cpp \
     cdbar.cpp \
+    cerberus.cpp \
     hpbar.cpp \
     main.cpp \
     mainwindow.cpp \
+    slime.cpp \
     stone.cpp
 
 HEADERS += \
     attribute.h \
+    babyhoneymon.h \
     cdbar.h \
+    cerberus.h \
     hpbar.h \
     mainwindow.h \
+    slime.h \
     stone.h
 
 FORMS += \
