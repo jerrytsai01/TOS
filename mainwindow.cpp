@@ -70,14 +70,8 @@ MainWindow::MainWindow(QWidget *parent)
     showcombo = new QGraphicsTextItem();
     showcombo->setPos(200,500);
     scene->addItem(showcombo);
-/*
-    HPbar *hpbar = new HPbar;
-    scene->addItem(hpbar);
-    QPixmap icon_p(":/new/prefix1/dataset/hp_icon.png");
-    QGraphicsPixmapItem *icon = new QGraphicsPixmapItem(icon_p);
-    icon->setPos(0,460);
-    scene->addItem(icon);
-*/
+
+    addEnemy();
     erasestone();
     fall();
 }
@@ -256,21 +250,23 @@ void MainWindow::fall(){
 void MainWindow::addEnemy(){
     if(gamephase == 1){
         vector<tuple<int, int, int>> slimeInitValues = {
-            {1, 100, 200},
-            {3, 150, 200},
-            {2, 200, 200}
+            {1, 100, 300},
+            {3, 270, 300},
+            {2, 440, 300}
         };
         for (const auto& [attr, x, y] : slimeInitValues) {
             slime* Slime = new slime(attr, x, y);
             scene->addItem(Slime);
         }
     }
-
-    babyhoneymon *Babyhoneymon = new babyhoneymon(150, 200);
-    scene->addItem(Babyhoneymon);
-
-    cerberus *Cerberus = new cerberus(200, 200);
-    scene->addItem(Cerberus);
+    else if(gamephase == 2){
+        babyhoneymon *Babyhoneymon = new babyhoneymon(150, 200);
+        scene->addItem(Babyhoneymon);
+    }
+    else if(gamephase == 3){
+        cerberus *Cerberus = new cerberus(200, 200);
+        scene->addItem(Cerberus);
+    }
 }
 
 

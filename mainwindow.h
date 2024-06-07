@@ -49,6 +49,6 @@ private:
     CDbar *cdbar;
     HPbar *hpbar;
     QGraphicsPixmapItem *cdIcon;
-    int gamephase = 1;
+    int gamephase = 3;
 };
 #endif // MAINWINDOW_H

@@ -18,8 +18,8 @@ slime::slime(int attr, int slmX, int slmY, QObject *parent)
     : QObject(parent), attr(static_cast<Attribute>(attr))
 {
     setPos(slmX,slmY);
+    CharacterOfEnemy();
     QTimer *timer = new QTimer(this);
-    connect(timer, SIGNAL(timeout()), this, SLOT(CharacterOfEnemy));
     connect(timer, SIGNAL(timeout()), this, SLOT(slmDEF));
     connect(timer, SIGNAL(timeout()), this, SLOT(slmATK));
     timer->start(10);
