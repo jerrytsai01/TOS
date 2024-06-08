@@ -24,7 +24,15 @@ public:
     void addStone();
     void find(int inx,int iny,int del,int type);
     void addEnemy();
+    void fallanimation(int y,int x,int ty);
     int HP = 2000;
+    static bool moveTime;
+
+signals:
+    void toerase();
+    void tofall();
+
+
 private slots:
     void erasestone();
     void handleStoneMove(QPointF newGirdPos, QPointF oldGridPos);

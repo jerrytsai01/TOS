@@ -10,6 +10,7 @@
 #include <QGraphicsItem>
 #include <QScrollBar>
 #include <QTimer>
+#include <QMouseEvent>
 #include <QDebug>
 #include <vector>
 #include <QLabel>
@@ -19,6 +20,7 @@
 
 using namespace std;
 
+bool MainWindow::moveTime = true;
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 
@@ -71,6 +73,7 @@ MainWindow::MainWindow(QWidget *parent)
     showcombo->setPos(200,500);
     scene->addItem(showcombo);
 
+    connect(this,&MainWindow::tofall,this,&MainWindow::fall);
     addEnemy();
     //erasestone();
     //fall();
@@ -101,13 +104,11 @@ void MainWindow::addStone()
 
 void MainWindow::CDoverEvent()
 {
-    /*
-    qDebug() <<"end";
-    cdbar->setVisible(false);
-    cdIcon->setVisible(false);
-    //erasestone();
+    moveTime = false;
+    erasestone();
     //fall();
-    */
+    moveTime = true;
+
 }
 void MainWindow::handleStoneMove(QPointF newGridPos, QPointF oldGridPos) {
     int oldY = floor((oldGridPos.y()-510)/90);
@@ -192,45 +193,63 @@ void MainWindow::erasestone(){
         }
     }
     //erase animation
-    QTimer *timer = new QTimer(this);
-    int count = 0;
-    connect(timer, &QTimer::timeout, this, [=]() mutable {
-        count++;
-        for(int y=0;y<5;y++){
-            for(int x=0;x<6;x++){
-                if(waitdelete[y][x]==count){
-                    delete savestone[y][x];
-                    stonepos[y][x]=0;
-                    qDebug()<<"delete x:"<<x<<" y:"<<y;
-                    qDebug()<<combo;
+
+    if(combo!=0){
+        QTimer *timer = new QTimer(this);
+        int count = 0;
+        connect(timer, &QTimer::timeout, this, [=]() mutable {
+            count++;
+            for(int y=0;y<5;y++){
+                for(int x=0;x<6;x++){
+                    if(waitdelete[y][x]==count){
+                        delete savestone[y][x];
+                        savestone[0][0] = nullptr;
+                        stonepos[y][x]=0;
+                        qDebug()<<"delete x:"<<x<<" y:"<<y;
+                        //qDebug()<<combo;
+                    }
                 }
             }
-        }
-        qDebug()<<"count"<<count;
-        if(count>=combo)
-            timer->stop();
-    });
-    timer->start(500);
+            qDebug()<<"combo"<<count;
+            if(count>=combo){
+                timer->stop();
+                qDebug()<<"tofall";
+                emit tofall();
+            }
+        });
+        timer->start(500);
+    }
+
+
+
 
 }
 
 void MainWindow::fall(){
-    for(int y=4;y>0;y--){
-        for(int x=0;x<6;x++){
-            if(savestone[y][x]==nullptr and savestone[y-1][x]!=nullptr and y>0){
-                swap(savestone[y][x],savestone[y-1][x]);
-                swap(stonepos[y][x],stonepos[y-1][x]);
-                QTimer *timer = new QTimer(this);
-                int count = 0;
-                connect(timer, &QTimer::timeout, this, [=]() mutable {
-                    count++;
-                    savestone[y][x]->setPos( x*a, y*a+510+count*10);
-                    qDebug()<<"fall"<<count;
-                    if(count==5)
-                        timer->stop();
-                });
-                timer->start(10);
-
+    qDebug()<<"falling";
+    for(int x=0;x<6;x++){
+        for(int y=4;y>0;y--){
+            if(stonepos[y][x]==0){
+                for(int ty=y;ty>=0;ty--){
+                    if(stonepos[ty][x]!=0){
+                        swap(savestone[ty][x],savestone[y][x]);
+                        swap(stonepos[ty][x],stonepos[y][x]);
+                        qDebug()<<"tofallanimation";
+                        fallanimation(y,x,ty);
+                    }
+                }
+            }
+        }
+    }
+    qDebug()<<"filling";
+    for(int x=0;x<6;x++){
+        for(int y=0;y<5;y++){
+            if(stonepos[y][x]==0){
+                int type = rand()%6+1;
+                stone *Stone=new stone(type, x*a, y*a+510, scene);
+                savestone[y][x]=Stone;
+                stonepos[y][x]=type;
+                scene->addItem(Stone);
             }
         }
     }
@@ -258,4 +277,16 @@ void MainWindow::addEnemy(){
     }
 }
 
+void MainWindow::fallanimation(int goal,int x,int now){
+    QTimer *timerr = new QTimer(this);
+    int count = 0;
+    connect(timerr, &QTimer::timeout, this, [=]() mutable {
+        count++;
+        savestone[goal][x]->setPos( x*a, now*a+510+count*10);
+        qDebug()<<"fall"<<count;
+        if(count==(goal-now)*9)
+            timerr->stop();
+    });
+    timerr->start(10);
 
+}

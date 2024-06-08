@@ -1,6 +1,7 @@
 #include "stone.h"
 #include "attribute.h"
 #include "math.h"
+#include "mainwindow.h"
 #include <vector>
 #include <QGraphicsPixmapItem>
 #include <QMouseEvent>
@@ -47,6 +48,16 @@ void stone::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     pressTimer->start(10);
     cdBar->setVisible(true);
     cdIcon->setVisible(true);
+    if(MainWindow::moveTime){
+            pressed = true;
+            oldGridPos.setX(floor(pos().x() / 90) * 90);
+            oldGridPos.setY(510 + floor((pos().y() - 510) / 90) * 90);
+            mousePoint = event->scenePos();
+            //qDebug() << "Mouse Pressed at Scene Position:" << mousePoint;
+            pressTimer->start(10);
+            cdBar->setVisible(true);
+            cdIcon->setVisible(true);
+        }
 }
 void stone::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
     pressed = false;
