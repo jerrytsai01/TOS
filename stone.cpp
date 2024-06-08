@@ -8,13 +8,23 @@
 #include <QDebug>
 #include <QTimer>
 // 构造函数实现
-stone::stone(int type, int X, int Y, QObject *parent)
+stone::stone(int type, int X, int Y, QGraphicsScene *scene, QObject *parent)
     : QObject(parent), type(static_cast<Attribute>(type)) {
     setPos(X,Y);
     skin(type, weather, burn);
     pressTimer = new QTimer(this);
-    pressTimer->setInterval(totalTime); // Set timer interval, e.g., 2000 milliseconds (2 seconds)
+    pressTimer->setInterval(10); // Set timer interval, e.g., 2000 milliseconds (2 seconds)
     connect(pressTimer, SIGNAL(timeout()), this, SLOT(emitTimer()));
+    // Initialize the cdBar
+    cdBar = new CDbar(); // Initially full
+    cdBar->setParentItem(this); // Make it a child of the stone
+    scene->addItem(cdBar);
+    cdBar->setVisible(false);
+    QPixmap cdIconPixmap(":/new/prefix1/dataset/cd_icon.png");
+    cdIcon = new QGraphicsPixmapItem(cdIconPixmap);
+    cdIcon->setPos(0,465);
+    scene->addItem(cdIcon);
+    cdIcon->setVisible(false);
 }
 
 // 获取符石类型的方法实现
@@ -35,10 +45,13 @@ void stone::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     mousePoint = event->scenePos();
     //qDebug() << "Mouse Pressed at Scene Position:" << mousePoint;
     pressTimer->start(10);
+    cdBar->setVisible(true);
+    cdIcon->setVisible(true);
 }
 void stone::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
     pressed = false;
     pressTimer->stop(); // Stop the timer
+    pressTimeCount = 0;
     emit CDover();
     //qDebug() <<"Release";
     // Calculate the grid position for the stone
@@ -47,17 +60,21 @@ void stone::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
     setPos(newX - 45, newY - 45); // Update stone position to the center of the grid
     //qDebug() << "Stone dropped at:" << QPointF(newX, newY);
     QGraphicsItem::mouseReleaseEvent(event); // Call the base class implementation
+    // Ensure cdBar is reset or hidden
+    cdBar->setVisible(false);
+    cdIcon->setVisible(false);
+    cdBar->updateBar(1.0f);
 }
 
 void stone::emitTimer()
-{    if(!pressed)
+{
+    if(!pressed)
         pressTimeCount = 0;
     else{
         pressTimeCount++;
     }
-    // Emit signal to update the timer rectangle
-    emit updateTimer(totalTime - pressTimeCount);
 }
+
 void stone::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
     // Update the width of the timer rectangle
     if (pressed and pressTimeCount <= 1000) {
@@ -83,11 +100,14 @@ void stone::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
             emit stoneMoved(newGridPos, oldGridPos);
             oldGridPos = newGridPos;
         }
-
+        // Calculate remaining time fraction
+        float remainingTimeFraction = static_cast<float>(1000 - pressTimeCount) / 1000.0f;
+        cdBar->updateBar(remainingTimeFraction); // Update the cdBar
     }
     else{
         pressed = false;
         pressTimer->stop();
+        pressTimeCount = 0;
         qDebug() << "Drag time limit reached. Stopping drag.";
         emit CDover();
         // Calculate the grid position for the stone
@@ -96,7 +116,10 @@ void stone::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
         setPos(newX - 45, newY - 45); // Update stone position to the center of the grid
         //qDebug() << "Stone dropped at:" << QPointF(newX, newY);
         QGraphicsItem::mouseReleaseEvent(event); // Call the base class implementation
-
+        // Ensure cdBar is reset or hidden
+        cdBar->setVisible(false);
+        cdIcon->setVisible(false);
+        cdBar->updateBar(1.0f);
     }
 }
 void stone::skin(int type, bool weather, bool burn)

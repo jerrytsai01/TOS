@@ -29,7 +29,6 @@ private slots:
     void erasestone();
     void handleStoneMove(QPointF newGirdPos, QPointF oldGridPos);
     void fall();
-    void updateTimerStrip(int remainingTime);
     void CDoverEvent();
 private:
     QGraphicsScene *scene = new QGraphicsScene();

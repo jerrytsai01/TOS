@@ -72,8 +72,8 @@ MainWindow::MainWindow(QWidget *parent)
     scene->addItem(showcombo);
 
     addEnemy();
-    erasestone();
-    fall();
+    //erasestone();
+    //fall();
 }
 
 void MainWindow::addStone()
@@ -84,9 +84,8 @@ void MainWindow::addStone()
         for(int x=0;x<6;x++){
             if(F[y][x] == false){
                 int type = rand()%6+1;
-                stone *Stone = new stone(type, x*a, y*a+510);
+                stone *Stone = new stone(type, x*a, y*a+510, scene);
                 connect(Stone, &stone::stoneMoved, this, &MainWindow::handleStoneMove);
-                connect(Stone, &stone::updateTimer, this, &MainWindow::updateTimerStrip);
                 connect(Stone, &stone::CDover, this, &MainWindow::CDoverEvent);
                 temps.push_back(Stone);
                 //savestone[y][x]=Stone;
@@ -99,26 +98,16 @@ void MainWindow::addStone()
         savestone.push_back(temps);
     }
 }
-void MainWindow::updateTimerStrip(int remainingTime) {
-    // 计算剩余时间的比例
-    float remainingTimeFraction = static_cast<float>(remainingTime) / 1000.0f;
-    qDebug() << remainingTimeFraction <<" " <<remainingTime;
-    // 更新计时器矩形的宽度
-    cdbar = new CDbar(remainingTimeFraction);
-    scene->addItem(cdbar);
-    QPixmap icon_p(":/new/prefix1/dataset/cd_icon.png");
-    cdIcon = new QGraphicsPixmapItem(icon_p);
-    cdIcon->setPos(0,460);
-    scene->addItem(cdIcon);
-}
 
 void MainWindow::CDoverEvent()
 {
+    /*
     qDebug() <<"end";
     cdbar->setVisible(false);
     cdIcon->setVisible(false);
     //erasestone();
     //fall();
+    */
 }
 void MainWindow::handleStoneMove(QPointF newGridPos, QPointF oldGridPos) {
     int oldY = floor((oldGridPos.y()-510)/90);

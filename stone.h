@@ -5,11 +5,12 @@
 #include <QObject>
 #include <QGraphicsView>
 #include "attribute.h"
+#include "cdbar.h"
 
 class stone: public QObject, public QGraphicsPixmapItem{
     Q_OBJECT
 public:
-    stone(int type,int X,int Y, QObject *parent = nullptr); // 使用整数类型的构造函数
+    stone(int type,int X,int Y, QGraphicsScene *scene, QObject *parent = nullptr); // 使用整数类型的构造函数
 
     Attribute getType() const;
     int getTypeAsInt() const;
@@ -20,7 +21,6 @@ public:
     bool weather = false, burn = false;
 signals:
     void stoneMoved(QPointF newGirdPos, QPointF oldGridPos);
-    void updateTimer(int remainingTime);
     void CDover();
 public slots:
     void emitTimer();
@@ -31,6 +31,8 @@ private:
     int pressTimeCount = 0;
     QPointF mousePoint, originalPos, newGridPos, oldGridPos;
     int const totalTime = 1000;
+    CDbar *cdBar;
+    QGraphicsPixmapItem *cdIcon;
 };
 
 #endif // STONE_H

@@ -6,7 +6,10 @@
 class CDbar:public QGraphicsPixmapItem
 {
 public:
-    CDbar(float remainingTime);
+    CDbar();
+    void updateBar(float remainingTime);
+private:
+    QPixmap fullPixmap;
 };
 
 #endif // CDBAR_H
