@@ -21,6 +21,7 @@ stone::stone(int type, int X, int Y, QGraphicsScene *scene, QObject *parent)
     cdBar->setParentItem(this); // Make it a child of the stone
     scene->addItem(cdBar);
     cdBar->setVisible(false);
+    cdBar->setZValue(9);
     QPixmap cdIconPixmap(":/new/prefix1/dataset/cd_icon.png");
     cdIcon = new QGraphicsPixmapItem(cdIconPixmap);
     cdIcon->setPos(0,465);

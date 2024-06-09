@@ -1,5 +1,5 @@
 #include "mainwindow.h"
-
+#include "loginwindow.h"
 #include <QApplication>
 #include <QLocale>
 #include <QTranslator>
@@ -17,7 +17,11 @@ int main(int argc, char *argv[])
             break;
         }
     }
-    MainWindow w;
-    w.show();
+    MainWindow *w = new MainWindow;
+        //w.show();
+        loginwindow l;
+        QObject::connect(&l,&loginwindow::start,w,&MainWindow::show);
+        QObject::connect(&l,&loginwindow::start,w,&MainWindow::onCharactersSelected);
+        l.show();
     return a.exec();
 }

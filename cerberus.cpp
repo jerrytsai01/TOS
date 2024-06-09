@@ -25,13 +25,9 @@ void cerberus::cbrDEF(){
 void cerberus::cbrATK(){
     if((slime::ATKform) && (cbrHP > 0)){
         if(cbrATKcd == 1){
-            for(int i = 0; i < 5; i++){
-                if(slime::ATKofEnemy[i] == 0){
-                    slime::ATKofEnemy[i] = cbrATKpow;
-                    break;
-                }
+                int cATK = cbrATKpow;
+                emit updateDamageC(cATK);
                 cbrATKcd = 5;
-            }
         }
         else cbrATKcd--;
     }

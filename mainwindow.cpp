@@ -6,6 +6,7 @@
 #include "slime.h"
 #include "babyhoneymon.h"
 #include "cerberus.h"
+#include "characters.h"
 #include <QGraphicsPixmapItem>
 #include <QGraphicsItem>
 #include <QScrollBar>
@@ -15,6 +16,8 @@
 #include <vector>
 #include <QLabel>
 #include <QString>
+#include <QGraphicsDropShadowEffect>
+#include <QFont>
 #include <stdlib.h> /* 亂數相關函數 */
 #include <time.h>   /* 時間相關函數 */
 
@@ -22,7 +25,7 @@ using namespace std;
 
 bool MainWindow::moveTime = true;
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
+    : QMainWindow(parent), sATK(0), cATK(0), bATK(0)
 
 {
     setFixedSize(540,960);
@@ -70,13 +73,46 @@ MainWindow::MainWindow(QWidget *parent)
     }
     addStone();
     showcombo = new QGraphicsTextItem();
-    showcombo->setPos(200,500);
+    showcombo->setPos(300,800);
+    showcombo->setPlainText(combotext);      // 设置初始文本
+    showcombo->setFont(QFont("Arial", 24));     // 设置字体和大小
+    showcombo->setDefaultTextColor(Qt::yellow);     // 设置文本颜色
+    showcombo->setZValue(10);
+    // 创建阴影效果作为边框
+        QGraphicsDropShadowEffect *shadowEffect = new QGraphicsDropShadowEffect();
+        shadowEffect->setOffset(0);  // 使阴影紧贴文本，产生边框效果
+        shadowEffect->setBlurRadius(5);  // 控制边框的模糊半径
+        shadowEffect->setColor(Qt::black);  // 边框颜色为黑色
+        showcombo->setGraphicsEffect(shadowEffect);
     scene->addItem(showcombo);
 
     connect(this,&MainWindow::tofall,this,&MainWindow::fall);
     addEnemy();
+    HPbar *hpBar = new HPbar();
+    connect( this, &MainWindow::updateHP,hpBar, &HPbar::updateHPBar);
+    scene->addItem(hpBar);
     //erasestone();
     //fall();
+}
+
+void MainWindow::onCharactersSelected(const std::vector<int> &charactersIn)
+{
+    // 处理接收到的角色数据
+    for(int character : charactersIn){
+        qDebug() << "Character selected:" << character;
+        characters.push_back(character);
+    }
+    addCharacters(characters);
+}
+
+void MainWindow::addCharacters(vector<int> &cha)
+{
+    for(size_t i=0;i <cha.size();i++){
+        qDebug() << cha[i];
+        Characters *character = new Characters(cha[i]);
+        character->setPos(i*90, 390);
+        scene->addItem(character);
+    }
 }
 
 void MainWindow::addStone()
@@ -105,6 +141,9 @@ void MainWindow::addStone()
 void MainWindow::CDoverEvent()
 {
     combo=0;
+    for(int i=1;i<=6;i++){
+        erasestonenum[i]=0;
+    }
     erasestone();
     //fall();
 
@@ -151,6 +190,7 @@ void MainWindow::erasestone(){
     moveTime = false;
     //reset
     iffall=0;
+    del=0;
     for(int y=0;y<5;y++){
         for(int x=0;x<6;x++){
             combine[y][x]=0;
@@ -192,25 +232,27 @@ void MainWindow::erasestone(){
     for(int y=0;y<5;y++){
         for(int x=0;x<6;x++){
             if(counterasestone[y][x]!=0){
-                erasestonenum[counterasestone[y][x]-1]++;
+                erasestonenum[counterasestone[y][x]]++;
             }
             if(iffinded[y][x]){
                 iffall=1;
-                combo++;
-                combotext="Combo: "+ QString::number(combo);
-
-                find(x,y,combo,stonepos[y][x]);
-
+                del++;
+                find(x,y,del,stonepos[y][x]);
             }
         }
     }
     //erase animation
-
     if(iffall){
+
         QTimer *timer = new QTimer(this);
         int count = 0;
         connect(timer, &QTimer::timeout, this, [=]() mutable {
             count++;
+            combo++;
+            showcombo->setVisible(true);
+            combotext="Combo: "+ QString::number(combo);
+            showcombo->setPlainText(combotext);
+
             for(int y=0;y<5;y++){
                 for(int x=0;x<6;x++){
                     if(waitdelete[y][x]==count){
@@ -224,12 +266,26 @@ void MainWindow::erasestone(){
             }
             //qDebug()<<"combo"<<count;
             //erase end
-            if(count>=combo){
+            if(count>=del){
                 timer->stop();
                 qDebug()<<"tofall";
                 //checkmatrix();
                 moveTime = true;
                 emit tofall();
+            }
+        });
+        timer->start(500);
+    }
+    else{
+        QTimer *timer = new QTimer(this);
+        int count = 0;
+        connect(timer, &QTimer::timeout, this, [=]() mutable {
+            count++;
+            combotext="Combo: "+ QString::number(combo);
+            showcombo->setPlainText(combotext);
+            if(count==1){
+                showcombo->setVisible(false);
+                timer->stop();
             }
         });
         timer->start(500);
@@ -289,22 +345,34 @@ void MainWindow::fall(){
 void MainWindow::addEnemy(){
     if(gamephase == 1){
         vector<tuple<int, int, int>> slimeInitValues = {
-            {1, 100, 300},
-            {3, 270, 300},
-            {2, 440, 300}
+            {1, 80, 250},
+            {3, 200, 250},
+            {2, 320, 250}
         };
         for (const auto& [attr, x, y] : slimeInitValues) {
             slime* Slime = new slime(attr, x, y);
             scene->addItem(Slime);
+            connect(Slime, &slime::updateDamageS, this, &MainWindow::handleSATKChanged);
         }
     }
     else if(gamephase == 2){
-        babyhoneymon *Babyhoneymon = new babyhoneymon(150, 200);
-        scene->addItem(Babyhoneymon);
+            vector<tuple<int, int, int>> slimeInitValues = {
+                {4, 100, 250},
+                {5, 320, 250}
+            };
+            for (const auto& [attr, x, y] : slimeInitValues) {
+                slime* Slime = new slime(attr, x, y);
+                scene->addItem(Slime);
+                connect(Slime, &slime::updateDamageS, this, &MainWindow::handleSATKChanged);
+            }
+            babyhoneymon *Babyhoneymon = new babyhoneymon(200, 250);
+            scene->addItem(Babyhoneymon);
+            connect(Babyhoneymon, &babyhoneymon::updateDamageB, this, &MainWindow::handleBATKChanged);
     }
     else if(gamephase == 3){
-        cerberus *Cerberus = new cerberus(200, 200);
+        cerberus *Cerberus = new cerberus(200, 250);
         scene->addItem(Cerberus);
+        connect(Cerberus, &cerberus::updateDamageC, this, &MainWindow::handleCATKChanged);
     }
 }
 
@@ -358,4 +426,51 @@ void MainWindow::checkmatrix(){
         }
         qDebug()<<a;
     }
+}
+
+void MainWindow::calATKandHEAL(){
+    for(int i = 0; i < 5; i++){
+        allpoints[i] = erasestonenum[i] * combo;
+    }
+    allpoints[5] = erasestonenum[5] * combo *5;
+}
+
+void MainWindow::handleSATKChanged(int sATK)
+{
+    this->sATK = sATK;
+    calDamage();
+}
+
+void MainWindow::handleCATKChanged(int cATK)
+{
+    this->cATK = cATK;
+    calDamage();
+}
+
+void MainWindow::handleBATKChanged(int bATK)
+{
+    this->bATK = bATK;
+    calDamage();
+}
+
+void MainWindow::calDamage()
+{
+    damage = sATK + cATK + bATK;
+    qDebug() << "Total Damage:" << damage;
+}
+
+void MainWindow::calHP(){
+    if(ATKform){
+        int recovery = combo * allpoints[5] * 5;
+        if(HP + recovery >= 2000)
+            HP = 2000;
+        else HP = HP + recovery;
+    }
+    else if(DEFform){
+        if(HP <= damage)
+            HP = 0;
+        else HP = HP - damage;
+    }
+
+    emit updateHP(HP);
 }

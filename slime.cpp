@@ -12,7 +12,7 @@ bool slime::RESTform = true;
 bool slime::DEFform = false;
 bool slime::ATKform = false;
 int slime::ATKofPlayer[6] = {0, 0, 0, 0, 0, 0};
-int slime::ATKofEnemy[5] = {0, 0, 0, 0, 0};
+
 
 slime::slime(int attr, int slmX, int slmY, QObject *parent)
     : QObject(parent), attr(static_cast<Attribute>(attr))
@@ -76,14 +76,12 @@ void slime::slmDEF(){
 void slime::slmATK(){
     if((ATKform) && (slmHP > 0)){
         if(slmATKcd == 1){
-            for(int i = 0; i < 5; i++){
-                if(ATKofEnemy[i] == 0){
-                    ATKofEnemy[i] = slmATKpow;
-                    break;
-                }
+                int sATK = slmATKpow;
+                emit updateDamageS(sATK);
                 slmATKcd = 3;
-            }
         }
         else slmATKcd--;
     }
 }
+
+

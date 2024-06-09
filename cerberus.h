@@ -14,10 +14,13 @@ class cerberus: public QObject, public QGraphicsPixmapItem{
 public:
     cerberus(int cbrX, int cbrY, QObject *parent = nullptr);
     Attribute: 1;
+    void cbrATK();
     int cbrHP = 700;
+signals:
+    void updateDamageC(int cATK);
+
 private slots:
     void cbrDEF();
-    void cbrATK();
 private:
     int cbrATKpow = 400;
     int cbrATKcd = 5;

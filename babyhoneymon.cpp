@@ -25,15 +25,10 @@ void babyhoneymon::bhmDEF(){
 void babyhoneymon::bhmATK(){
     if((slime::ATKform) && (bhmHP > 0)){
         if(bhmATKcd == 1){
-            for(int i = 0; i < 5; i++){
-                if(slime::ATKofEnemy[i] == 0){
-                    slime::ATKofEnemy[i] = bhmATKpow;
-                    break;
-                }
-                bhmATKcd = 3;
-            }
+            int bATK = bhmATKpow;
+            emit updateDamageB(bATK);
+            bhmATKcd = 3;
         }
         else bhmATKcd--;
     }
 }
-

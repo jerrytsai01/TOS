@@ -1,29 +1,21 @@
 #ifndef HPBAR_H
 #define HPBAR_H
 
+//wu{
 #include <QGraphicsPixmapItem>
 #include <QObject>
-#include "mainwindow.h"
-#include "slime.h"
 
-class MainWindow;
-class slime;
-
-class HPbar: public QObject, public QGraphicsPixmapItem
+class HPbar:public QObject,public QGraphicsPixmapItem
 {
 public:
     HPbar();
-    int hp = 2000;
-    const int MAXhp = 2000;
+
 public slots:
-    void recovery();
-    void attackedbyENE();
-    void updateHPBar();
+    void updateHPBar(int HP);
 private:
-    MainWindow *mainwindow;
-    slime *Slime;
     QPixmap fullPixmap;
-    int damage = 0;
+    const int MaxHP = 2000;
 };
+//}wu
 
 #endif // HPBAR_H

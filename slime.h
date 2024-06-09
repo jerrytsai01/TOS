@@ -18,10 +18,14 @@ public:
     static bool RESTform, DEFform, ATKform;
     static int ATKofPlayer[6];
     static int ATKofEnemy[5];
+    explicit slime(QObject *parent = nullptr);
+    void slmATK();
+signals:
+    void updateDamageS(int sATK);
+    //wu======================
 private slots:
     void CharacterOfEnemy();
     void slmDEF();
-    void slmATK();
 private:
     Attribute attr;
     bool reset = true;

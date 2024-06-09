@@ -15,9 +15,12 @@ public:
     babyhoneymon(int bhmX, int bhmY, QObject *parent = nullptr);
     Attribute: 3;
     int bhmHP = 300;
+    void bhmATK();
+signals:
+    void updateDamageB(int bATK);
 private slots:
     void bhmDEF();
-    void bhmATK();
+
 private:
     int bhmATKpow = 100;
     int bhmATKcd = 3;
