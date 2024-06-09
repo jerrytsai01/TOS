@@ -104,10 +104,10 @@ void MainWindow::addStone()
 
 void MainWindow::CDoverEvent()
 {
-    moveTime = false;
+    combo=0;
     erasestone();
     //fall();
-    moveTime = true;
+
 
 }
 void MainWindow::handleStoneMove(QPointF newGridPos, QPointF oldGridPos) {
@@ -115,14 +115,14 @@ void MainWindow::handleStoneMove(QPointF newGridPos, QPointF oldGridPos) {
     int oldX = floor(oldGridPos.x()/90);
     int newY = floor((newGridPos.y()-510)/90);
     int newX = floor(newGridPos.x()/90);
-    qDebug() << "Stone Grid positions moved from " << oldGridPos << " to " << newGridPos;
-    qDebug() << "Stone positions moved from (" << oldX << "," << oldY << ") to (" << newX << "," << newY << ")";
+    //qDebug() << "Stone Grid positions moved from " << oldGridPos << " to " << newGridPos;
+    //qDebug() << "Stone positions moved from (" << oldX << "," << oldY << ") to (" << newX << "," << newY << ")";
     //std::swap(F[oldY][oldX], F[newY][newX]);
     //savestone[oldY][oldX]->setPos(newGridPos);
     savestone[newY][newX]->setPos(oldGridPos);
     std::swap(savestone[oldY][oldX], savestone[newY][newX]);
     std::swap(stonepos[oldY][oldX], stonepos[newY][newX]);
-    qDebug() << "Swapped grid positions in array";
+    //qDebug() << "Swapped grid positions in array";
 }
 
 void MainWindow::find(int inx,int iny,int del,int type){
@@ -148,6 +148,17 @@ void MainWindow::find(int inx,int iny,int del,int type){
 }
 
 void MainWindow::erasestone(){
+    moveTime = false;
+    //reset
+    iffall=0;
+    for(int y=0;y<5;y++){
+        for(int x=0;x<6;x++){
+            combine[y][x]=0;
+            iffinded[y][x]=0;
+            counterasestone[y][x]=0;
+            waitdelete[y][x]=0;
+        }
+    }
     qDebug() << "erase";
     //x line
     for(int y=0;y<5;y++){
@@ -184,6 +195,7 @@ void MainWindow::erasestone(){
                 erasestonenum[counterasestone[y][x]-1]++;
             }
             if(iffinded[y][x]){
+                iffall=1;
                 combo++;
                 combotext="Combo: "+ QString::number(combo);
 
@@ -194,7 +206,7 @@ void MainWindow::erasestone(){
     }
     //erase animation
 
-    if(combo!=0){
+    if(iffall){
         QTimer *timer = new QTimer(this);
         int count = 0;
         connect(timer, &QTimer::timeout, this, [=]() mutable {
@@ -203,25 +215,25 @@ void MainWindow::erasestone(){
                 for(int x=0;x<6;x++){
                     if(waitdelete[y][x]==count){
                         delete savestone[y][x];
-                        savestone[0][0] = nullptr;
+                        savestone[y][x] = nullptr;
                         stonepos[y][x]=0;
                         qDebug()<<"delete x:"<<x<<" y:"<<y;
                         //qDebug()<<combo;
                     }
                 }
             }
-            qDebug()<<"combo"<<count;
+            //qDebug()<<"combo"<<count;
+            //erase end
             if(count>=combo){
                 timer->stop();
                 qDebug()<<"tofall";
+                //checkmatrix();
+                moveTime = true;
                 emit tofall();
             }
         });
         timer->start(500);
     }
-
-
-
 
 }
 
@@ -230,29 +242,48 @@ void MainWindow::fall(){
     for(int x=0;x<6;x++){
         for(int y=4;y>0;y--){
             if(stonepos[y][x]==0){
-                for(int ty=y;ty>=0;ty--){
+                for(int ty=y-1;ty>=0;ty--){
                     if(stonepos[ty][x]!=0){
                         swap(savestone[ty][x],savestone[y][x]);
                         swap(stonepos[ty][x],stonepos[y][x]);
-                        qDebug()<<"tofallanimation";
+                        /*qDebug()<<"stonepos: ";
+                        for(int y=0;y<5;y++){
+                            QString a;
+                            for(int x=0;x<6;x++){
+                                a.append(stonepos[y][x]);
+                            }
+                            qDebug()<<a;
+                        }*/
+                        //qDebug()<<"tofallanimation";
                         fallanimation(y,x,ty);
+                        break;
                     }
                 }
             }
         }
     }
+
     qDebug()<<"filling";
     for(int x=0;x<6;x++){
         for(int y=0;y<5;y++){
             if(stonepos[y][x]==0){
                 int type = rand()%6+1;
                 stone *Stone=new stone(type, x*a, y*a+510, scene);
+                if(y!=0){
+                    //fill fall animation
+                    Stone->setPos(x*a,510);
+                    fallanimation(y,x,0);
+                }
+                connect(Stone, &stone::stoneMoved, this, &MainWindow::handleStoneMove);
+                connect(Stone, &stone::CDover, this, &MainWindow::CDoverEvent);
                 savestone[y][x]=Stone;
                 stonepos[y][x]=type;
                 scene->addItem(Stone);
             }
         }
     }
+
+    erasestone();
 }
 
 void MainWindow::addEnemy(){
@@ -278,15 +309,53 @@ void MainWindow::addEnemy(){
 }
 
 void MainWindow::fallanimation(int goal,int x,int now){
+
     QTimer *timerr = new QTimer(this);
     int count = 0;
     connect(timerr, &QTimer::timeout, this, [=]() mutable {
         count++;
         savestone[goal][x]->setPos( x*a, now*a+510+count*10);
-        qDebug()<<"fall"<<count;
+        //qDebug()<<"fall"<<count;
         if(count==(goal-now)*9)
             timerr->stop();
     });
     timerr->start(10);
+    //savestone[goal][x]->setPos( x*a, goal*a+510);
+}
 
+
+void MainWindow::checkmatrix(){
+
+    qDebug()<<"stonepos: ";
+    for(int y=0;y<5;y++){
+        QString a;
+        for(int x=0;x<6;x++){
+            a.append(stonepos[y][x]);
+        }
+        qDebug()<<a;
+    }
+    qDebug()<<"iffinded :";
+    for(int y=0;y<5;y++){
+        QString a;
+        for(int x=0;x<6;x++){
+            a.append(iffinded[y][x]);
+        }
+        qDebug()<<a;
+    }
+    qDebug()<<"counterasestone :";
+    for(int y=0;y<5;y++){
+        QString a;
+        for(int x=0;x<6;x++){
+            a.append(counterasestone[y][x]);
+        }
+        qDebug()<<a;
+    }
+    qDebug()<<"waitdelete :";
+    for(int y=0;y<5;y++){
+        QString a;
+        for(int x=0;x<6;x++){
+            a.append(waitdelete[y][x]);
+        }
+        qDebug()<<a;
+    }
 }

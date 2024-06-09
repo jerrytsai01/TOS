@@ -25,8 +25,10 @@ public:
     void find(int inx,int iny,int del,int type);
     void addEnemy();
     void fallanimation(int y,int x,int ty);
+    void checkmatrix();
     int HP = 2000;
     static bool moveTime;
+    int iffall;
 
 signals:
     void toerase();

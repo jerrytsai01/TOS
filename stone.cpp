@@ -107,7 +107,7 @@ void stone::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
         newGridPos.setY(510 + floor((newPos.y() - 510) / 90) * 90);
         //qDebug() << "Mouse Moved to Scene Position:" << mousePoint;
         if (newGridPos != oldGridPos) {
-            qDebug() << "Move from "<<oldGridPos<<" to "<<newGridPos;
+            //qDebug() << "Move from "<<oldGridPos<<" to "<<newGridPos;
             emit stoneMoved(newGridPos, oldGridPos);
             oldGridPos = newGridPos;
         }
@@ -119,7 +119,7 @@ void stone::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
         pressed = false;
         pressTimer->stop();
         pressTimeCount = 0;
-        qDebug() << "Drag time limit reached. Stopping drag.";
+        //qDebug() << "Drag time limit reached. Stopping drag.";
         emit CDover();
         // Calculate the grid position for the stone
         int newX = floor(pos().x() / 90) * 90 + 45; // Round to the nearest multiple of 90 (grid size) and add offset for center
