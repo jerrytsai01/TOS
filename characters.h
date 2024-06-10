@@ -10,6 +10,7 @@ class Characters: public QObject, public QGraphicsPixmapItem{
 public:
     Characters(int ID, QObject *parent = nullptr);
     Attribute type;
+    void ATKanimation(QPointF enemyPos);
 private:
     int id;
 };

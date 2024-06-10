@@ -12,14 +12,14 @@ using namespace std;
 class babyhoneymon: public QObject, public QGraphicsPixmapItem{
     Q_OBJECT
 public:
-    babyhoneymon(int bhmX, int bhmY, QObject *parent = nullptr);
+    babyhoneymon(int bhmX, int bhmY);
     Attribute: 3;
     int bhmHP = 300;
     void bhmATK();
 signals:
     void updateDamageB(int bATK);
 private slots:
-    void bhmDEF();
+    void killbhm();
 
 private:
     int bhmATKpow = 100;
@@ -27,7 +27,4 @@ private:
 };
 
 #endif // BABYHONEYMON_H
-
-
-
 

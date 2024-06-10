@@ -11,7 +11,7 @@
 #include <QGraphicsItem>
 #include <QScrollBar>
 #include <QTimer>
-#include <QMouseEvent>
+#include <QGraphicsSceneMouseEvent>
 #include <QDebug>
 #include <QApplication>
 #include <vector>
@@ -120,6 +120,7 @@ void MainWindow::addCharacters(vector<int> &cha)
         qDebug() << cha[i];
         Characters *character = new Characters(cha[i]);
         character->setPos(i*90, 390);
+        charObj.push_back(character);
         scene->addItem(character);
     }
 }
@@ -135,6 +136,7 @@ void MainWindow::addStone()
                 stone *Stone = new stone(type, x*a, y*a+510, scene);
                 connect(Stone, &stone::stoneMoved, this, &MainWindow::handleStoneMove);
                 connect(Stone, &stone::CDover, this, &MainWindow::CDoverEvent);
+                connect(this, &MainWindow::forceRel, Stone, &stone::forceRelease);
                 temps.push_back(Stone);
                 //savestone[y][x]=Stone;
                 stonepos[y][x]=type;
@@ -156,7 +158,7 @@ void MainWindow::CDoverEvent()
     }
     erasestone();
     //攻擊寫這裡
-
+    CharsATK();
     //
     if(std::find(enemy.begin(),enemy.end(), 2) != enemy.end()){
         weatherStone();
@@ -185,13 +187,13 @@ void MainWindow::handleStoneMove(QPointF newGridPos, QPointF oldGridPos) {
     if(gamephase == 2){
         if(savestone[newY][newX]->weather){
             qDebug() << "Triggering mouse release on weather stone at:" << newY << "," << newX;
-            QMouseEvent releaseEvent(QEvent::MouseButtonRelease, newGridPos, Qt::LeftButton, Qt::NoButton, Qt::NoModifier);
-            QApplication::sendEvent(savestone[oldY][oldX], &releaseEvent);
+            emit forceRel();
             HP-=100;
             emit updateHP(HP);
+            /*
             std::swap(savestone[oldY][oldX], savestone[newY][newX]);
             std::swap(stonepos[oldY][oldX], stonepos[newY][newX]);
-            return; // 提前返回，不执行后续逻辑
+            return; // 提前返回，不执行后续逻辑*/
         }
     }
     else if(gamephase == 3){
@@ -398,6 +400,7 @@ void MainWindow::fall(){
                 }
                 connect(Stone, &stone::stoneMoved, this, &MainWindow::handleStoneMove);
                 connect(Stone, &stone::CDover, this, &MainWindow::CDoverEvent);
+                connect(this, &MainWindow::forceRel, Stone, &stone::forceRelease);
                 savestone[y][x]=Stone;
                 stonepos[y][x]=type;
                 scene->addItem(Stone);
@@ -418,8 +421,13 @@ void MainWindow::addEnemy(){
         for (const auto& [attr, x, y] : slimeInitValues) {
             slime* Slime = new slime(attr, x, y);
             scene->addItem(Slime);
-            enemy.push_back(1);
             connect(Slime, &slime::updateDamageS, this, &MainWindow::handleSATKChanged);
+
+            enemy.push_back(1);
+
+            enemys *a = new enemys;
+            a->s = Slime;
+            enemyObj.push_back(a);
         }
     }
     else if(gamephase == 2){
@@ -431,22 +439,181 @@ void MainWindow::addEnemy(){
                 slime* Slime = new slime(attr, x, y);
                 scene->addItem(Slime);
                 connect(Slime, &slime::updateDamageS, this, &MainWindow::handleSATKChanged);
+
                 enemy.push_back(1);
+
+                enemys *a = new enemys;
+                a->s = Slime;
+                enemyObj.push_back(a);
             }
             babyhoneymon *Babyhoneymon = new babyhoneymon(200, 250);
             scene->addItem(Babyhoneymon);
             connect(Babyhoneymon, &babyhoneymon::updateDamageB, this, &MainWindow::handleBATKChanged);
             weatherStone();
+
             enemy.push_back(2);
+
+            enemys *a = new enemys;
+            a->b = Babyhoneymon;
+            enemyObj.push_back(a);
     }
     else if(gamephase == 3){
         cerberus *Cerberus = new cerberus(200, 250);
         scene->addItem(Cerberus);
         connect(Cerberus, &cerberus::updateDamageC, this, &MainWindow::handleCATKChanged);
+
         enemy.push_back(3);
+
+        enemys *a = new enemys;
+        a->c = Cerberus;
+        enemyObj.push_back(a);
     }
 }
 
+void MainWindow::CharsATK(){
+    if((gamephase == 1)&&(!resetENEhp)){
+        for(int i = 0; i < 3; i++){
+            EnemyHP[i] = 100;
+        }
+    }
+    else if((gamephase == 2)&&(!resetENEhp)){
+        EnemyHP[0] = 100;
+        EnemyHP[1] = 300;
+        EnemyHP[2] = 100;
+    }
+    else if((gamephase == 3)&&(!resetENEhp)){
+        EnemyHP[1] = 700;
+    }
+    if((gamephase < 3)&&(EnemyHP[0] + EnemyHP[1] + EnemyHP[2] == 0)){
+        resetENEhp = false;
+        gamephase++;
+    }
+    for(int i = 0; i < 6; i++){
+        for(int j = 1; j <= 5; j++){
+            if(characters[i] == j){
+                ATKofChars[i] = allpoints[j - 1];
+                break;
+            }
+        }
+    }
+    for(int i = 0; i < 6; i++){
+        int atk = 0;
+        for(int j = 0; j < 3; j++){
+            if(EnemyHP[j] == 0)
+                continue;
+            else {
+                if(gamephase == 1){
+                    if(j == 0){
+                        switch(characters[i]){
+                        case(1) :
+                            atk = ATKofChars[i] * 0.5;
+                            break;
+                        case(3) :
+                            atk = ATKofChars[i] * 2;
+                            break;
+                        default :
+                            atk = ATKofChars[i];
+                            break;
+                        }
+                    }
+                    else if(j == 1){
+                        switch(characters[i]){
+                        case(2) :
+                            atk = ATKofChars[i] * 2;
+                            break;
+                        case(3) :
+                            atk = ATKofChars[i] * 0.5;
+                            break;
+                        default :
+                            atk = ATKofChars[i];
+                            break;
+                        }
+                    }
+                    else {
+                        switch(characters[i]){
+                        case(1) :
+                            atk = ATKofChars[i] * 2;
+                            break;
+                        case(2) :
+                            atk = ATKofChars[i] * 0.5;
+                            break;
+                        default :
+                            atk = ATKofChars[i];
+                            break;
+                        }
+                    }
+                }
+                else if(gamephase == 2){
+                    if(j == 0){
+                        switch(characters[i]){
+                        case(5) :
+                            atk = ATKofChars[i] * 2;
+                            break;
+                        default :
+                            atk = ATKofChars[i];
+                            break;
+                        }
+                    }
+                    else if(j == 1){
+                        switch(characters[i]){
+                        case(1) :
+                            atk = ATKofChars[i] * 2;
+                            break;
+                        case(2) :
+                            atk = ATKofChars[i] * 0.5;
+                            break;
+                        default :
+                            atk = ATKofChars[i];
+                            break;
+                        }
+                    }
+                    else {
+                        switch(characters[i]){
+                        case(4) :
+                            atk = ATKofChars[i] * 2;
+                            break;
+                        default :
+                            atk = ATKofChars[i];
+                            break;
+                        }
+                    }
+                }
+                else {
+                    switch(characters[i]){
+                    case(2) :
+                        atk = ATKofChars[i] * 2;
+                        break;
+                    case(3) :
+                        atk = ATKofChars[i] * 0.5;
+                        break;
+                    default :
+                        atk = ATKofChars[i];
+                        break;
+                    }
+                }
+            }
+            if(EnemyHP[j] <= atk){
+                EnemyHP[j] = 0;
+                enemy.pop_back();
+            }
+            else {
+                EnemyHP[j] = EnemyHP[j] - atk;
+            }
+            if((gamephase == 2)&&(j == 1)) {
+                enemyObj[j]->b->bhmHP = EnemyHP[j];
+                charObj[i]->ATKanimation(enemyObj[j]->b->pos());
+            }
+            else if((gamephase == 3)&&(j == 1)) {
+                enemyObj[j]->c->cbrHP = EnemyHP[j];
+                charObj[i]->ATKanimation(enemyObj[j]->c->pos());
+            }
+            else {
+                enemyObj[j]->s->slmHP = EnemyHP[j];
+                charObj[i]->ATKanimation(enemyObj[j]->s->pos());
+            }
+        }
+    }
+}
 void MainWindow::fallanimation(int goal,int x,int now){
 
     QTimer *timerr = new QTimer(this);

@@ -6,6 +6,7 @@
 #include <QGraphicsPixmapItem>
 #include <QMouseEvent>
 #include <QGraphicsSceneMouseEvent>
+#include <QApplication>
 #include <QDebug>
 #include <QTimer>
 // 构造函数实现
@@ -90,6 +91,12 @@ void stone::emitTimer()
     // Calculate remaining time fraction
     float remainingTimeFraction = static_cast<float>(1000 - pressTimeCount) / 1000.0f;
     cdBar->updateBar(remainingTimeFraction); // Update the cdBar
+}
+
+void stone::forceRelease()
+{
+    qDebug() << "forceReleaseEvent triggered";
+    pressTimeCount = 1000;
 }
 
 void stone::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {

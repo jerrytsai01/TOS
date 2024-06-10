@@ -3,27 +3,21 @@
 #include <QGraphicsPixmapItem>
 #include <QGraphicsScene>
 
-babyhoneymon::babyhoneymon(int bhmX, int bhmY, QObject *parent)
+babyhoneymon::babyhoneymon(int bhmX, int bhmY)
 {
     setPixmap(QPixmap(":/new/prefix1/dataset/enemy/267n.png"));
     setPos(bhmX,bhmY);
 }
 
-void babyhoneymon::bhmDEF(){
-    if(slime::DEFform){
-        for(int i = 0; i < 6; i++){
-            bhmHP = bhmHP - slime::ATKofPlayer[i];
-            slime::ATKofPlayer[i] = 0;
-            if(bhmHP <= 0){
-                delete this;
-                break;
-            }
-        }
+//wu{
+void babyhoneymon::killbhm(){
+    if(bhmHP == 0) {
+        delete this;
     }
 }
 
 void babyhoneymon::bhmATK(){
-    if((slime::ATKform) && (bhmHP > 0)){
+    if(bhmHP > 0){
         if(bhmATKcd == 1){
             int bATK = bhmATKpow;
             emit updateDamageB(bATK);
@@ -32,3 +26,4 @@ void babyhoneymon::bhmATK(){
         else bhmATKcd--;
     }
 }
+//}wu

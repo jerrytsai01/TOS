@@ -26,6 +26,7 @@ signals:
     void CDover();
 public slots:
     void emitTimer();
+    void forceRelease();
 private:
     QTimer *pressTimer;
     QPointF mousePoint, originalPos, newGridPos, oldGridPos;

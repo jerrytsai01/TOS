@@ -7,9 +7,12 @@
 #include <vector>
 #include <QString>
 #include "stone.h"
+#include "characters.h"
 #include "hpbar.h"
 #include "cdbar.h"
 #include "slime.h"
+#include "babyhoneymon.h"
+#include "cerberus.h"
 #include "setwindow.h"
 
 using namespace std;
@@ -17,6 +20,12 @@ using namespace std;
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 */
+struct enemys{    // 一個敵人用一個struct，是哪種就用哪個來指，判斷是哪種的時候就看他的指針是不是空指針
+    slime *s = nullptr;
+    babyhoneymon *b = nullptr;
+    cerberus *c = nullptr;
+};
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -29,6 +38,7 @@ public:
     void fallanimation(int y,int x,int ty);
     void addCharacters(vector<int>& cha);
     void checkmatrix();
+    void CharsATK();
     int HP = 2000;
     static bool moveTime;
     int allpoints[6];
@@ -39,12 +49,15 @@ public:
     bool RESTform = true, ATKform = false, DEFform = false;
     //}wu
     void weatherStone();
-
+    bool resetENEhp = false;
+    int EnemyHP[3] = {0, 0, 0};
+    int ATKofChars[6] = {0, 0, 0, 0, 0, 0};
 signals:
     void toerase();
     void tofall();
     void updateHP(int HP);
     void over();
+    void forceRel();
 public slots:
     void onCharactersSelected(const std::vector<int> &characters);
     void calHP();
@@ -69,11 +82,13 @@ private:
     vector<vector<int>> waitdelete;             //消除順序
     vector<vector<int>> counterasestone;        //有三連符石
     vector<int> enemy;                          //slime:1 baby:2 boss:3
+    vector<enemys*> enemyObj;
     int erasestonenum[7];                    //各屬性符石消除數量 1~6
     int combo;
     QString combotext;
     QGraphicsTextItem *showcombo;
-    vector<int> characters;                  //角色
+    vector<int> characters;                  //角色屬性
+    vector<Characters*> charObj;
     int a=90;
     CDbar *cdbar;
     HPbar *hpbar;

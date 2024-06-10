@@ -1,5 +1,7 @@
 #include "characters.h"
 #include "attribute.h"
+#include "bullet.h"
+#include "QDebug"
 #include <QGraphicsPixmapItem>
 Characters::Characters(int ID, QObject *parent): QObject(parent), id(ID)
 {
@@ -25,4 +27,12 @@ Characters::Characters(int ID, QObject *parent): QObject(parent), id(ID)
         type = Attribute::Dark;
         break;
     }
+}
+
+void Characters::ATKanimation(QPointF enemyPos)
+{
+    qDebug() << "Shoot";
+    bullet *Bullet = new bullet;
+    scene()->addItem(Bullet);
+    Bullet->setTargetPosition(enemyPos, pos());
 }

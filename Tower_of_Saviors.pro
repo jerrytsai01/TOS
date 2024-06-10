@@ -11,6 +11,7 @@ CONFIG += c++11
 SOURCES += \
     attribute.cpp \
     babyhoneymon.cpp \
+    bullet.cpp \
     cdbar.cpp \
     cerberus.cpp \
     characters.cpp \
@@ -25,6 +26,7 @@ SOURCES += \
 HEADERS += \
     attribute.h \
     babyhoneymon.h \
+    bullet.h \
     cdbar.h \
     cerberus.h \
     characters.h \
