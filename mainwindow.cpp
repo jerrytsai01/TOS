@@ -184,13 +184,14 @@ void MainWindow::handleStoneMove(QPointF newGridPos, QPointF oldGridPos) {
     savestone[newY][newX]->setPos(oldGridPos);
     if(gamephase == 2){
         if(savestone[newY][newX]->weather){
-            QMouseEvent releaseEvent(QEvent::MouseButtonRelease, oldGridPos, Qt::LeftButton, Qt::NoButton, Qt::NoModifier);
+            qDebug() << "Triggering mouse release on weather stone at:" << newY << "," << newX;
+            QMouseEvent releaseEvent(QEvent::MouseButtonRelease, newGridPos, Qt::LeftButton, Qt::NoButton, Qt::NoModifier);
             QApplication::sendEvent(savestone[oldY][oldX], &releaseEvent);
             HP-=100;
+            emit updateHP(HP);
             std::swap(savestone[oldY][oldX], savestone[newY][newX]);
             std::swap(stonepos[oldY][oldX], stonepos[newY][newX]);
             return; // 提前返回，不执行后续逻辑
-
         }
     }
     else if(gamephase == 3){
@@ -332,16 +333,14 @@ void MainWindow::erasestone(){
         });
         timer->start(500);
     }
-
 }
 
 void MainWindow::weatherStone()
 {
-
     bool set1 = false;
     while (!set1) {
-        int y1 = rand()%6;
-        int x1 = rand()%5;
+        int y1 = rand()%5;
+        int x1 = rand()%6;
         if(savestone[y1][x1]->weather == false){
             savestone[y1][x1]->weather = true;
             savestone[y1][x1]->skin(stonepos[y1][x1], true, false);
@@ -350,8 +349,8 @@ void MainWindow::weatherStone()
     }
     bool set2 = false;
     while (!set2) {
-        int y2 = rand()%6;
-        int x2 = rand()%5;
+        int y2 = rand()%5;
+        int x2 = rand()%6;
         if(savestone[y2][x2]->weather == false){
             savestone[y2][x2]->weather = true;
             savestone[y2][x2]->skin(stonepos[y2][x2], true, false);
@@ -437,7 +436,7 @@ void MainWindow::addEnemy(){
             babyhoneymon *Babyhoneymon = new babyhoneymon(200, 250);
             scene->addItem(Babyhoneymon);
             connect(Babyhoneymon, &babyhoneymon::updateDamageB, this, &MainWindow::handleBATKChanged);
-            //weatherStone();
+            weatherStone();
             enemy.push_back(2);
     }
     else if(gamephase == 3){

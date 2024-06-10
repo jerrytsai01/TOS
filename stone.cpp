@@ -62,10 +62,10 @@ void stone::mousePressEvent(QGraphicsSceneMouseEvent *event) {
         }
 }
 void stone::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
-    qDebug() << "release";
+    qDebug() << "mouseReleaseEvent triggered";
     pressed = false;
     pressTimer->stop(); // Stop the timer
-    pressTimeCount = 0;
+    pressTimeCount = 1000;
     emit CDover();
     //qDebug() <<"Release";
     // Calculate the grid position for the stone

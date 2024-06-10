@@ -16,7 +16,7 @@ CDbar::CDbar() {
 }
 
 void CDbar::updateBar(float remainingTime) {
-    qDebug() << remainingTime;
+    //qDebug() << remainingTime;
     // Calculate the width of the pixmap to display
     int newWidth = static_cast<int>(fullPixmap.width() * remainingTime);
     QPixmap croppedPixmap = fullPixmap.copy(0, 0, newWidth, fullPixmap.height());
