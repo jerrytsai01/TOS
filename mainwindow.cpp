@@ -13,6 +13,7 @@
 #include <QTimer>
 #include <QMouseEvent>
 #include <QDebug>
+#include <QApplication>
 #include <vector>
 #include <QLabel>
 #include <QString>
@@ -79,11 +80,11 @@ MainWindow::MainWindow(QWidget *parent)
     showcombo->setDefaultTextColor(Qt::yellow);     // 设置文本颜色
     showcombo->setZValue(10);
     // 创建阴影效果作为边框
-        QGraphicsDropShadowEffect *shadowEffect = new QGraphicsDropShadowEffect();
-        shadowEffect->setOffset(0);  // 使阴影紧贴文本，产生边框效果
-        shadowEffect->setBlurRadius(5);  // 控制边框的模糊半径
-        shadowEffect->setColor(Qt::black);  // 边框颜色为黑色
-        showcombo->setGraphicsEffect(shadowEffect);
+    QGraphicsDropShadowEffect *shadowEffect = new QGraphicsDropShadowEffect();
+    shadowEffect->setOffset(0);  // 使阴影紧贴文本，产生边框效果
+    shadowEffect->setBlurRadius(5);  // 控制边框的模糊半径
+    shadowEffect->setColor(Qt::black);  // 边框颜色为黑色
+    showcombo->setGraphicsEffect(shadowEffect);
     scene->addItem(showcombo);
 
     connect(this,&MainWindow::tofall,this,&MainWindow::fall);
@@ -93,6 +94,14 @@ MainWindow::MainWindow(QWidget *parent)
     scene->addItem(hpBar);
     //erasestone();
     //fall();
+
+    setBtn = new QPushButton(this);
+    setBtn->setIcon(QIcon(":/new/prefix1/dataset/character/ID4.png"));
+    setBtn->setFixedSize(40, 40);
+    setBtn->setIconSize(setBtn->size());
+    setBtn->move(500,0);
+    s = new setwindow();
+    connect(setBtn, &QPushButton::clicked, s, &setwindow::show);
 }
 
 void MainWindow::onCharactersSelected(const std::vector<int> &charactersIn)
@@ -140,28 +149,62 @@ void MainWindow::addStone()
 
 void MainWindow::CDoverEvent()
 {
+    moveTime = false;
     combo=0;
     for(int i=1;i<=6;i++){
         erasestonenum[i]=0;
     }
     erasestone();
-    //fall();
+    //攻擊寫這裡
 
-
+    //
+    if(std::find(enemy.begin(),enemy.end(), 2) != enemy.end()){
+        weatherStone();
+    }
+    if(enemy.empty()){
+        if(gamephase<3){
+            gamephase++;
+            addEnemy();
+        }
+        else{
+            emit over();
+        }
+    }
+    moveTime = true;
 }
+
 void MainWindow::handleStoneMove(QPointF newGridPos, QPointF oldGridPos) {
+    //hpbar->setVisible(false);
     int oldY = floor((oldGridPos.y()-510)/90);
     int oldX = floor(oldGridPos.x()/90);
     int newY = floor((newGridPos.y()-510)/90);
     int newX = floor(newGridPos.x()/90);
     //qDebug() << "Stone Grid positions moved from " << oldGridPos << " to " << newGridPos;
     //qDebug() << "Stone positions moved from (" << oldX << "," << oldY << ") to (" << newX << "," << newY << ")";
-    //std::swap(F[oldY][oldX], F[newY][newX]);
-    //savestone[oldY][oldX]->setPos(newGridPos);
     savestone[newY][newX]->setPos(oldGridPos);
+    if(gamephase == 2){
+        if(savestone[newY][newX]->weather){
+            QMouseEvent releaseEvent(QEvent::MouseButtonRelease, oldGridPos, Qt::LeftButton, Qt::NoButton, Qt::NoModifier);
+            QApplication::sendEvent(savestone[oldY][oldX], &releaseEvent);
+            HP-=100;
+            std::swap(savestone[oldY][oldX], savestone[newY][newX]);
+            std::swap(stonepos[oldY][oldX], stonepos[newY][newX]);
+            return; // 提前返回，不执行后续逻辑
+
+        }
+    }
+    else if(gamephase == 3){
+        if(savestone[newY][newX]->burn){
+            HP-=30;
+            emit updateHP(HP);
+        }
+        else{
+            savestone[newY][newX]->burn = true;
+            savestone[newY][newX]->skin(stonepos[newY][newX], false, true);
+        }
+    }
     std::swap(savestone[oldY][oldX], savestone[newY][newX]);
     std::swap(stonepos[oldY][oldX], stonepos[newY][newX]);
-    //qDebug() << "Swapped grid positions in array";
 }
 
 void MainWindow::find(int inx,int iny,int del,int type){
@@ -187,7 +230,6 @@ void MainWindow::find(int inx,int iny,int del,int type){
 }
 
 void MainWindow::erasestone(){
-    moveTime = false;
     //reset
     iffall=0;
     del=0;
@@ -293,6 +335,31 @@ void MainWindow::erasestone(){
 
 }
 
+void MainWindow::weatherStone()
+{
+
+    bool set1 = false;
+    while (!set1) {
+        int y1 = rand()%6;
+        int x1 = rand()%5;
+        if(savestone[y1][x1]->weather == false){
+            savestone[y1][x1]->weather = true;
+            savestone[y1][x1]->skin(stonepos[y1][x1], true, false);
+            set1 = true;
+        }
+    }
+    bool set2 = false;
+    while (!set2) {
+        int y2 = rand()%6;
+        int x2 = rand()%5;
+        if(savestone[y2][x2]->weather == false){
+            savestone[y2][x2]->weather = true;
+            savestone[y2][x2]->skin(stonepos[y2][x2], true, false);
+            set2 = true;
+        }
+    }
+}
+
 void MainWindow::fall(){
     qDebug()<<"falling";
     for(int x=0;x<6;x++){
@@ -352,6 +419,7 @@ void MainWindow::addEnemy(){
         for (const auto& [attr, x, y] : slimeInitValues) {
             slime* Slime = new slime(attr, x, y);
             scene->addItem(Slime);
+            enemy.push_back(1);
             connect(Slime, &slime::updateDamageS, this, &MainWindow::handleSATKChanged);
         }
     }
@@ -364,15 +432,19 @@ void MainWindow::addEnemy(){
                 slime* Slime = new slime(attr, x, y);
                 scene->addItem(Slime);
                 connect(Slime, &slime::updateDamageS, this, &MainWindow::handleSATKChanged);
+                enemy.push_back(1);
             }
             babyhoneymon *Babyhoneymon = new babyhoneymon(200, 250);
             scene->addItem(Babyhoneymon);
             connect(Babyhoneymon, &babyhoneymon::updateDamageB, this, &MainWindow::handleBATKChanged);
+            //weatherStone();
+            enemy.push_back(2);
     }
     else if(gamephase == 3){
         cerberus *Cerberus = new cerberus(200, 250);
         scene->addItem(Cerberus);
         connect(Cerberus, &cerberus::updateDamageC, this, &MainWindow::handleCATKChanged);
+        enemy.push_back(3);
     }
 }
 
@@ -390,7 +462,6 @@ void MainWindow::fallanimation(int goal,int x,int now){
     timerr->start(10);
     //savestone[goal][x]->setPos( x*a, goal*a+510);
 }
-
 
 void MainWindow::checkmatrix(){
 
@@ -471,6 +542,5 @@ void MainWindow::calHP(){
             HP = 0;
         else HP = HP - damage;
     }
-
     emit updateHP(HP);
 }

@@ -11,24 +11,23 @@ class stone: public QObject, public QGraphicsPixmapItem{
     Q_OBJECT
 public:
     stone(int type,int X,int Y, QGraphicsScene *scene, QObject *parent = nullptr); // 使用整数类型的构造函数
-
     Attribute getType() const;
+    Attribute type = getType();
     int getTypeAsInt() const;
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *reEvent);
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
     void skin(int type, bool weather, bool burn);
     bool weather = false, burn = false;
+    int pressTimeCount = 0;
+    bool pressed = false;
 signals:
     void stoneMoved(QPointF newGirdPos, QPointF oldGridPos);
     void CDover();
 public slots:
     void emitTimer();
 private:
-    Attribute type = getType();
-    bool pressed = false;
     QTimer *pressTimer;
-    int pressTimeCount = 0;
     QPointF mousePoint, originalPos, newGridPos, oldGridPos;
     int const totalTime = 1000;
     CDbar *cdBar;

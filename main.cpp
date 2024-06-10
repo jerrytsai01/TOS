@@ -18,10 +18,10 @@ int main(int argc, char *argv[])
         }
     }
     MainWindow *w = new MainWindow;
-        //w.show();
-        loginwindow l;
-        QObject::connect(&l,&loginwindow::start,w,&MainWindow::show);
-        QObject::connect(&l,&loginwindow::start,w,&MainWindow::onCharactersSelected);
-        l.show();
+    //w.show();
+    loginwindow l;
+    QObject::connect(&l,&loginwindow::start,w,&MainWindow::show);
+    QObject::connect(&l,&loginwindow::start,w,&MainWindow::onCharactersSelected);
+    l.show();
     return a.exec();
 }

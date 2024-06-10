@@ -3,6 +3,8 @@
 
 #include <QGraphicsPixmapItem>
 #include <QObject>
+#include <QGraphicsRectItem>
+
 class CDbar:public QGraphicsPixmapItem
 {
 public:
@@ -10,6 +12,7 @@ public:
     void updateBar(float remainingTime);
 private:
     QPixmap fullPixmap;
+    QGraphicsRectItem *background;
 };
 
 #endif // CDBAR_H

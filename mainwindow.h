@@ -3,12 +3,14 @@
 #include <QMainWindow>
 #include <QGraphicsScene>
 #include <QGraphicsView>
+#include <QPushButton>
 #include <vector>
 #include <QString>
 #include "stone.h"
 #include "hpbar.h"
 #include "cdbar.h"
 #include "slime.h"
+#include "setwindow.h"
 
 using namespace std;
 /*QT_BEGIN_NAMESPACE
@@ -36,12 +38,13 @@ public:
     void calDamage();
     bool RESTform = true, ATKform = false, DEFform = false;
     //}wu
+    void weatherStone();
 
 signals:
     void toerase();
     void tofall();
     void updateHP(int HP);
-
+    void over();
 public slots:
     void onCharactersSelected(const std::vector<int> &characters);
     void calHP();
@@ -65,6 +68,7 @@ private:
     vector<vector<int>> iffinded;              //有無查找過
     vector<vector<int>> waitdelete;             //消除順序
     vector<vector<int>> counterasestone;        //有三連符石
+    vector<int> enemy;                          //slime:1 baby:2 boss:3
     int erasestonenum[7];                    //各屬性符石消除數量 1~6
     int combo;
     QString combotext;
@@ -74,10 +78,10 @@ private:
     CDbar *cdbar;
     HPbar *hpbar;
     QGraphicsPixmapItem *cdIcon;
-    int gamephase = 1;
+    int gamephase = 2;
     int del;
-    int sATK;
-    int cATK;
-    int bATK;
+    int sATK, cATK, bATK;
+    QPushButton *setBtn;
+    setwindow *s;
 };
 #endif // MAINWINDOW_H

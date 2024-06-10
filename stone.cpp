@@ -40,7 +40,7 @@ int stone::getTypeAsInt() const {
 }
 // mouse event
 void stone::mousePressEvent(QGraphicsSceneMouseEvent *event) {
-
+/*
     pressed = true;
     oldGridPos.setX(floor(pos().x() / 90) * 90);
     oldGridPos.setY(510 + floor((pos().y() - 510) / 90) * 90);
@@ -49,6 +49,7 @@ void stone::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     pressTimer->start(10);
     cdBar->setVisible(true);
     cdIcon->setVisible(true);
+    */
     if(MainWindow::moveTime){
             pressed = true;
             oldGridPos.setX(floor(pos().x() / 90) * 90);
@@ -61,6 +62,7 @@ void stone::mousePressEvent(QGraphicsSceneMouseEvent *event) {
         }
 }
 void stone::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
+    qDebug() << "release";
     pressed = false;
     pressTimer->stop(); // Stop the timer
     pressTimeCount = 0;
@@ -85,6 +87,9 @@ void stone::emitTimer()
     else{
         pressTimeCount++;
     }
+    // Calculate remaining time fraction
+    float remainingTimeFraction = static_cast<float>(1000 - pressTimeCount) / 1000.0f;
+    cdBar->updateBar(remainingTimeFraction); // Update the cdBar
 }
 
 void stone::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
@@ -112,9 +117,6 @@ void stone::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
             emit stoneMoved(newGridPos, oldGridPos);
             oldGridPos = newGridPos;
         }
-        // Calculate remaining time fraction
-        float remainingTimeFraction = static_cast<float>(1000 - pressTimeCount) / 1000.0f;
-        cdBar->updateBar(remainingTimeFraction); // Update the cdBar
     }
     else{
         pressed = false;
@@ -167,7 +169,7 @@ void stone::skin(int type, bool weather, bool burn)
             setPixmap(QPixmap(":/new/prefix1/dataset/runestone/burning_water_stone.png"));
             break;
         case 3:
-            setPixmap(QPixmap(":/new/prefix1/dataset/runestone/burning_earth_stone.png"));
+            setPixmap(QPixmap(":/new/prefix1/dataset/runestone/burnibg_earth_stone.png"));
             break;
         case 4:
             setPixmap(QPixmap(":/new/prefix1/dataset/runestone/burning_light_stone.png"));

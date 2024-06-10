@@ -18,6 +18,7 @@ SOURCES += \
     loginwindow.cpp \
     main.cpp \
     mainwindow.cpp \
+    setwindow.cpp \
     slime.cpp \
     stone.cpp
 
@@ -30,6 +31,7 @@ HEADERS += \
     hpbar.h \
     loginwindow.h \
     mainwindow.h \
+    setwindow.h \
     slime.h \
     stone.h
 
