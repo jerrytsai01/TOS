@@ -14,6 +14,7 @@ public slots:
     void updateHPBar(int HP);
 private:
     QPixmap fullPixmap;
+
     const int MaxHP = 2000;
 };
 //}wu

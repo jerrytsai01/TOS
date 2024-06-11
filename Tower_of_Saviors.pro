@@ -15,6 +15,7 @@ SOURCES += \
     cdbar.cpp \
     cerberus.cpp \
     characters.cpp \
+    endwindow.cpp \
     hpbar.cpp \
     loginwindow.cpp \
     main.cpp \
@@ -30,6 +31,7 @@ HEADERS += \
     cdbar.h \
     cerberus.h \
     characters.h \
+    endwindow.h \
     hpbar.h \
     loginwindow.h \
     mainwindow.h \

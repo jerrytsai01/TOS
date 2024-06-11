@@ -26,6 +26,7 @@ stone::stone(int type, int X, int Y, QGraphicsScene *scene, QObject *parent)
     QPixmap cdIconPixmap(":/new/prefix1/dataset/cd_icon.png");
     cdIcon = new QGraphicsPixmapItem(cdIconPixmap);
     cdIcon->setPos(0,465);
+    cdIcon->setZValue(6);
     scene->addItem(cdIcon);
     cdIcon->setVisible(false);
 }

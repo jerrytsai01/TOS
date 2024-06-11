@@ -7,6 +7,7 @@
 #include "babyhoneymon.h"
 #include "cerberus.h"
 #include "characters.h"
+#include "endwindow.h"
 #include <QGraphicsPixmapItem>
 #include <QGraphicsItem>
 #include <QScrollBar>
@@ -25,6 +26,7 @@
 using namespace std;
 
 bool MainWindow::moveTime = true;
+int MainWindow::gamephase =1;
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), sATK(0), cATK(0), bATK(0)
 
@@ -91,18 +93,21 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this,&MainWindow::ATKsign, this, &MainWindow::ATKevent);
     addEnemy();
     HPbar *hpBar = new HPbar();
+    QPixmap hpbtn= QPixmap(":/new/prefix1/dataset/hp_icon.png");;
+    QGraphicsPixmapItem *hpIcon = new QGraphicsPixmapItem(hpbtn);
+    hpIcon->setPos(0,465);
+    scene->addItem(hpIcon);
     connect( this, &MainWindow::updateHP,hpBar, &HPbar::updateHPBar);
     scene->addItem(hpBar);
     //erasestone();
     //fall();
 
     setBtn = new QPushButton(this);
-    setBtn->setIcon(QIcon(":/new/prefix1/dataset/character/ID4.png"));
-    setBtn->setFixedSize(40, 40);
+    setBtn->setIcon(QIcon(":/new/prefix1/dataset/S__9814023.jpg"));
+    setBtn->setFixedSize(89, 60);
     setBtn->setIconSize(setBtn->size());
-    setBtn->move(500,0);
-    s = new setwindow();
-    connect(setBtn, &QPushButton::clicked, s, &setwindow::show);
+    setBtn->move(540-89,0);
+    connect(setBtn, &QPushButton::clicked, this, &MainWindow::setshow);
 }
 
 void MainWindow::onCharactersSelected(const std::vector<int> &charactersIn)
@@ -612,12 +617,13 @@ void MainWindow::erasestone(){
             showcombo->setPlainText(combotext);
             if(count==1){
                 showcombo->setVisible(false);
+                emit ATKsign();
                 timer->stop();
             }
         });
         timer->start(500);
     }
-    emit ATKsign();
+
 }
 
 void MainWindow::weatherStone()
@@ -795,4 +801,8 @@ void MainWindow::calHP(){
         else HP = HP - damage;
     }
     emit updateHP(HP);
+}
+
+void MainWindow::reset(){
+
 }

@@ -8,6 +8,7 @@ HPbar::HPbar()
     fullPixmap = QPixmap(":/new/prefix1/dataset/hp_bar.png");
     setPixmap(fullPixmap);
     setPos(52,480);
+
 }
 
 void HPbar::updateHPBar(int HP) {

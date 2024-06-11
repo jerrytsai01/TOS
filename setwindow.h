@@ -12,9 +12,20 @@ class setwindow: public QMainWindow
     Q_OBJECT
 public:
     setwindow(QWidget *parent = nullptr);
+
+
+
+signals:
+    void reset();
+    void surrender();
+
 private:
     QGraphicsScene *scene;
     QGraphicsView *view;
+    QPushButton *sur;
+    QPushButton *goback;
+    QPushButton *restart;
+
 };
 
 #endif // SETWINDOW_H

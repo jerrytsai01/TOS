@@ -41,5 +41,9 @@
         <file>dataset/hp_icon.png</file>
         <file>dataset/runestone_bg.png</file>
         <file>dataset/start button.jpg</file>
+        <file>dataset/S__9814023.jpg</file>
+        <file>dataset/go back.png</file>
+        <file>dataset/restart.png</file>
+        <file>dataset/surrender.png</file>
     </qresource>
 </RCC>

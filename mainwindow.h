@@ -14,6 +14,7 @@
 #include "babyhoneymon.h"
 #include "cerberus.h"
 #include "setwindow.h"
+#include "endwindow.h"
 
 using namespace std;
 /*QT_BEGIN_NAMESPACE
@@ -50,6 +51,7 @@ public:
     bool resetENEhp = false;
     int EnemyHP[3] = {0, 0, 0};
     int ATKofChars[6] = {0, 0, 0, 0, 0, 0};
+    static int  gamephase ;
 signals:
     void toerase();
     void tofall();
@@ -57,6 +59,7 @@ signals:
     void over();
     void forceRel();
     void ATKsign();
+    void setshow();
 public slots:
     void onCharactersSelected(const std::vector<int> &characters);
     void calHP();
@@ -64,6 +67,7 @@ public slots:
     void handleCATKChanged(int cATK);
     void handleBATKChanged(int bATK);
     void ATKevent();
+    void reset();
 private slots:
     void erasestone();
     void handleStoneMove(QPointF newGirdPos, QPointF oldGridPos);
@@ -92,11 +96,11 @@ private:
     CDbar *cdbar;
     HPbar *hpbar;
     QGraphicsPixmapItem *cdIcon;
-    int gamephase = 1;
     int del;
     int sATK, cATK, bATK;
     QPushButton *setBtn;
     setwindow *s;
+    endwindow *e;
     bool calculated = false;
 };
 #endif // MAINWINDOW_H
