@@ -10,28 +10,30 @@
 bullet::bullet(QGraphicsPixmapItem *parent): QObject(), QGraphicsEllipseItem(parent), speed(10)
 {
     // Set the size and color of the bullet
-    setRect(0, 0, 10, 10);
+    setRect(0, 0, 20, 20);
     setBrush(Qt::black);
     setPen(Qt::NoPen);
-
-    speed = 2;
+    speed = 10;
     QTimer*timer = new QTimer(this);
-    connect(timer, SIGNAL(timeout()), this, SLOT());
+    connect(timer, SIGNAL(timeout()), this, SLOT(move()));
     timer->start(10);
 }
 
-void bullet::setTargetPosition(const QPointF &target, const QPointF &start)
+void bullet::setTargetPosition(const QPointF &t, const QPointF &s)
 {
-    qDebug() << "Target set start" << start << " to " <<target;
+    QPointF start(s.x()+45, s.y()+45);
+    QPointF target(t.x()+45, t.y()+45);
+    //qDebug() << "Target set start" << start << " to " <<target;
     // Calculate the angle between the start position and the target position
-    angle = qAtan2(target.y() - start.y(), target.x() - start.x());
+    angle = qAtan2(target.y() - (start.y()), target.x() - (start.x()));
+
     setPos(start);
     this->target = target;  // 保存目标位置
 }
 
 void bullet::move()
 {
-    qDebug() << "move";
+    //qDebug() << "move";
     if (pos() != target)
     {
         qreal dx = speed * qCos(angle);

@@ -12,6 +12,7 @@ babyhoneymon::babyhoneymon(int bhmX, int bhmY)
 //wu{
 void babyhoneymon::killbhm(){
     if(bhmHP == 0) {
+        scene()->removeItem(this);
         delete this;
     }
 }

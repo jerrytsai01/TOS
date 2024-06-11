@@ -41,13 +41,11 @@ public:
     void CharsATK();
     int HP = 2000;
     static bool moveTime;
-    int allpoints[6];
+    int allpoints[7];
     int iffall;
-    //wu{
     int damage = 0;
     void calDamage();
-    bool RESTform = true, ATKform = false, DEFform = false;
-    //}wu
+    bool RESTform = true, ALIGNform = false, ATKform = false, DEFform = false;
     void weatherStone();
     bool resetENEhp = false;
     int EnemyHP[3] = {0, 0, 0};
@@ -58,13 +56,14 @@ signals:
     void updateHP(int HP);
     void over();
     void forceRel();
+    void ATKsign();
 public slots:
     void onCharactersSelected(const std::vector<int> &characters);
     void calHP();
     void handleSATKChanged(int sATK);
     void handleCATKChanged(int cATK);
     void handleBATKChanged(int bATK);
-
+    void ATKevent();
 private slots:
     void erasestone();
     void handleStoneMove(QPointF newGirdPos, QPointF oldGridPos);
@@ -93,10 +92,11 @@ private:
     CDbar *cdbar;
     HPbar *hpbar;
     QGraphicsPixmapItem *cdIcon;
-    int gamephase = 2;
+    int gamephase = 1;
     int del;
     int sATK, cATK, bATK;
     QPushButton *setBtn;
     setwindow *s;
+    bool calculated = false;
 };
 #endif // MAINWINDOW_H

@@ -12,6 +12,7 @@ cerberus::cerberus(int cbrX, int cbrY)
 //wu{
 void cerberus::killcbr(){
     if(cbrHP == 0) {
+        scene()->removeItem(this);
         delete this;
     }
 }

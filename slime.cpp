@@ -66,6 +66,7 @@ void slime::slmDEF(){
             slmHP = slmHP - ATKofPlayer[i];
             ATKofPlayer[i] = 0;
             if(slmHP <= 0){
+                scene()->removeItem(this);
                 delete this;
                 break;
             }
