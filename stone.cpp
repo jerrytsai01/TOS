@@ -68,12 +68,13 @@ void stone::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
     pressed = false;
     pressTimer->stop(); // Stop the timer
     pressTimeCount = 1000;
-    emit CDover();
+    forceRel = false;
     //qDebug() <<"Release";
     // Calculate the grid position for the stone
     int newX = qRound(pos().x() / 90) * 90 + 45; // Round to the nearest multiple of 90 (grid size) and add offset for center
     int newY = 510 + qRound((pos().y() - 510) / 90) * 90 + 45; // Round to the nearest multiple of 90 (grid size) and add offset for center
     setPos(newX - 45, newY - 45); // Update stone position to the center of the grid
+    emit CDover();
     //qDebug() << "Stone dropped at:" << QPointF(newX, newY);
     QGraphicsItem::mouseReleaseEvent(event); // Call the base class implementation
     // Ensure cdBar is reset or hidden
@@ -102,7 +103,8 @@ void stone::forceRelease()
 
 void stone::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
     // Update the width of the timer rectangle
-    if (pressed and pressTimeCount <= 1000) {
+    qDebug() << "move";
+    if (pressed and pressTimeCount <= 1000 and !forceRel) {
         QPointF newPos = event->scenePos(); // Get new mouse position
         if(event->scenePos().y() <= 510){
             newPos.setY(510);
@@ -130,13 +132,13 @@ void stone::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
         pressed = false;
         pressTimer->stop();
         pressTimeCount = 0;
-        //qDebug() << "Drag time limit reached. Stopping drag.";
-        emit CDover();
+        forceRel = false;
         // Calculate the grid position for the stone
         int newX = floor(pos().x() / 90) * 90 + 45; // Round to the nearest multiple of 90 (grid size) and add offset for center
         int newY = 510 + floor((pos().y() - 510) / 90) * 90 + 45; // Round to the nearest multiple of 90 (grid size) and add offset for center
         setPos(newX - 45, newY - 45); // Update stone position to the center of the grid
         //qDebug() << "Stone dropped at:" << QPointF(newX, newY);
+        emit CDover();
         QGraphicsItem::mouseReleaseEvent(event); // Call the base class implementation
         // Ensure cdBar is reset or hidden
         cdBar->setVisible(false);

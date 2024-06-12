@@ -33,6 +33,7 @@ private:
     int const totalTime = 1000;
     CDbar *cdBar;
     QGraphicsPixmapItem *cdIcon;
+    bool forceRel = false;
 };
 
 #endif // STONE_H

@@ -1,6 +1,6 @@
 #include "loginwindow.h"
 #include <QGraphicsPixmapItem>
-
+#include <vector>
 loginwindow::loginwindow(QWidget *parent) : QMainWindow(parent)
 {
     setFixedSize(540,960);
@@ -58,6 +58,7 @@ loginwindow::loginwindow(QWidget *parent) : QMainWindow(parent)
     connect(Start, &QPushButton::clicked, this, &QWidget::close);
 
     setCentralWidget(view);
+    characters = {};
 }
 
 void loginwindow::characterSelected(int characterID)
@@ -66,6 +67,7 @@ void loginwindow::characterSelected(int characterID)
         characters.push_back(characterID);
         QPixmap aP(QString(":/new/prefix1/dataset/character/ID%1.png").arg(characterID));
         QGraphicsPixmapItem *a = new QGraphicsPixmapItem(aP);
+        t.push_back(a);
         int x = (characters.size() - 1) * 90;
         a->setPos(x, 800);
         scene->addItem(a);
@@ -75,7 +77,16 @@ void loginwindow::characterSelected(int characterID)
 void loginwindow::startGame()
 {
     if(characters.empty()){
-        characters.push_back(1);
+        for(int i=1;i<6;i++){
+                   characters.push_back(i);
+               }
     }
     emit start(characters);
+}
+
+void loginwindow::reset(){
+    for(size_t  i=0;i<t.size();i++){
+        delete t[i];
+    }
+    characters = {};
 }

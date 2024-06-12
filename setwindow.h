@@ -13,7 +13,8 @@ class setwindow: public QMainWindow
 public:
     setwindow(QWidget *parent = nullptr);
 
-
+public slots:
+    void lose();
 
 signals:
     void reset();

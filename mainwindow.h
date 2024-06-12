@@ -49,7 +49,7 @@ public:
     bool RESTform = true, ALIGNform = false, ATKform = false, DEFform = false;
     void weatherStone();
     bool resetENEhp = false;
-    int EnemyHP[3] = {0, 0, 0};
+    vector<int> EnemyHP = {};
     int ATKofChars[6] = {0, 0, 0, 0, 0, 0};
     static int  gamephase ;
 signals:
@@ -60,6 +60,7 @@ signals:
     void forceRel();
     void ATKsign();
     void setshow();
+    void lose();
 public slots:
     void onCharactersSelected(const std::vector<int> &characters);
     void calHP();
@@ -74,6 +75,7 @@ private slots:
     void fall();
     void CDoverEvent();
     void calATKandHEAL();
+
 private:
     QGraphicsScene *scene = new QGraphicsScene();
     QGraphicsView *view = new QGraphicsView(scene);
@@ -90,6 +92,8 @@ private:
     int combo;
     QString combotext;
     QGraphicsTextItem *showcombo;
+    QString showdamagetxt[14];
+    QGraphicsTextItem *showdamage[14];
     vector<int> characters;                  //角色屬性
     vector<Characters*> charObj;
     int a=90;
@@ -102,5 +106,6 @@ private:
     setwindow *s;
     endwindow *e;
     bool calculated = false;
+    static int roundCount;
 };
 #endif // MAINWINDOW_H

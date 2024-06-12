@@ -17,6 +17,7 @@ public:
 public slots:
     void characterSelected(int characterID);
     void startGame();
+    void reset();
 signals:
     void start(std::vector<int> cha);
 private:
@@ -24,6 +25,7 @@ private:
     QGraphicsView *view;
     QPushButton *C1, *C2, *C3, *C4, *C5, *Start;
     std::vector<int> characters;
+    std::vector<QGraphicsPixmapItem*> t;
 };
 
 #endif // LOGINWINDOW_H

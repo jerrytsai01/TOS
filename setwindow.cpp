@@ -29,3 +29,6 @@ setwindow::setwindow(QWidget *parent) : QMainWindow(parent)
     setCentralWidget(view);
 }
 
+void setwindow::lose(){
+    emit surrender();
+}
