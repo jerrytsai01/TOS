@@ -103,7 +103,7 @@ void stone::forceRelease()
 
 void stone::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
     // Update the width of the timer rectangle
-    qDebug() << "move";
+    //qDebug() << "move";
     if (pressed and pressTimeCount <= 1000 and !forceRel) {
         QPointF newPos = event->scenePos(); // Get new mouse position
         if(event->scenePos().y() <= 510){

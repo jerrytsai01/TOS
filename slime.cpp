@@ -18,11 +18,13 @@ slime::slime(int attr, int slmX, int slmY, QObject *parent)
     : QObject(parent), attr(static_cast<Attribute>(attr))
 {
     setPos(slmX,slmY);
+    //hpbar->setPos(slmX,slmY+150);
     CharacterOfEnemy();
     QTimer *timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(slmDEF));
     connect(timer, SIGNAL(timeout()), this, SLOT(slmATK));
     timer->start(10);
+
 }
 
 void slime::CharacterOfEnemy(){
@@ -32,26 +34,31 @@ void slime::CharacterOfEnemy(){
         //fire slime
         case Attribute::Fire:
             setPixmap(QPixmap(":/new/prefix1/dataset/enemy/98n.png"));
+            //hpbar->setPixmap(QPixmap(":/new/prefix1/dataset/hp2_0.png"));
             break;
 
         //water slime
         case Attribute::Water:
             setPixmap(QPixmap(":/new/prefix1/dataset/enemy/96n.png"));
+            //hpbar->setPixmap(QPixmap(":/new/prefix1/dataset/hp1_0.png"));
             break;
 
         //earth slime
         case Attribute::Earth:
             setPixmap(QPixmap(":/new/prefix1/dataset/enemy/100n.png"));
+            //hpbar->setPixmap(QPixmap(":/new/prefix1/dataset/hp3_0.png"));
             break;
 
         //light slime
         case Attribute::Light:
             setPixmap(QPixmap(":/new/prefix1/dataset/enemy/102n.png"));
+            //hpbar->setPixmap(QPixmap(":/new/prefix1/dataset/hp4_0.png"));
             break;
 
         //dark slime
         case Attribute::Dark:
             setPixmap(QPixmap(":/new/prefix1/dataset/enemy/104n.png"));
+            //hpbar->setPixmap(QPixmap(":/new/prefix1/dataset/hp5_0.png"));
             break;
 
         default :

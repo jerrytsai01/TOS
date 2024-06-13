@@ -15,5 +15,5 @@ void HPbar::updateHPBar(int HP) {
     int fullWidth = fullPixmap.width();
     int displayedWidth = (HP * fullWidth) / MaxHP;
     QPixmap croppedPixmap = fullPixmap.copy(0, 0, displayedWidth, fullPixmap.height());
-    setPixmap(croppedPixmap);
+    this->setPixmap(croppedPixmap);
 }

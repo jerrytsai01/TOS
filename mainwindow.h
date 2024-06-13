@@ -94,6 +94,12 @@ private:
     QGraphicsTextItem *showcombo;
     QString showdamagetxt[14];
     QGraphicsTextItem *showdamage[14];
+    QString showhptxt;
+    QGraphicsTextItem *showhp;
+    QString roundtxt;
+    QGraphicsTextItem *showround[3];
+    QPixmap monp[7];
+    QGraphicsPixmapItem *monsterhp[7];
     vector<int> characters;                  //角色屬性
     vector<Characters*> charObj;
     int a=90;

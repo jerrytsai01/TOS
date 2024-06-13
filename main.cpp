@@ -32,6 +32,10 @@ int main(int argc, char *argv[])
     QObject::connect(&s,&setwindow::surrender,w,&MainWindow::close);
     QObject::connect(&s,&setwindow::surrender,w,&MainWindow::reset);
     QObject::connect(&s,&setwindow::surrender,&l,&loginwindow::reset);
+    QObject::connect(w,&MainWindow::over,w,&MainWindow::close);
+    QObject::connect(w,&MainWindow::over,w,&MainWindow::reset);
+    QObject::connect(w,&MainWindow::over,&e,&endwindow::show);
+    QObject::connect(w,&MainWindow::over,&e,&endwindow::gg);
     QObject::connect(&e,&endwindow::openl,&l,&loginwindow::show);
     QObject::connect(&l,&loginwindow::start,w,&MainWindow::show);
     QObject::connect(&l,&loginwindow::start,w,&MainWindow::onCharactersSelected);

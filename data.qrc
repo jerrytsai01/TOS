@@ -45,5 +45,10 @@
         <file>dataset/go back.png</file>
         <file>dataset/restart.png</file>
         <file>dataset/surrender.png</file>
+        <file>dataset/hp1_0.png</file>
+        <file>dataset/hp2_0.png</file>
+        <file>dataset/hp3_0.png</file>
+        <file>dataset/hp4_0.png</file>
+        <file>dataset/hp5_0.png</file>
     </qresource>
 </RCC>
