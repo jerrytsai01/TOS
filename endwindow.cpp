@@ -1,5 +1,6 @@
 #include "endwindow.h"
 #include "mainwindow.h"
+#include "QDebug"
 #include <QPushButton>
 
 endwindow::endwindow(QWidget *parent) : QMainWindow(parent)
@@ -26,6 +27,7 @@ endwindow::endwindow(QWidget *parent) : QMainWindow(parent)
 }
 
 void endwindow::gg(){
+    qDebug() << "gamephase" << MainWindow::gamephase;
     if(MainWindow::gamephase >3){
         result->setText("YOU WIN");
     }
@@ -35,4 +37,5 @@ void endwindow::gg(){
     result->setStyleSheet("QLabel { color : black; font-size: 40px; }");
     result->move(120,150);
     scene->addWidget(result);
+
 }

@@ -57,7 +57,7 @@ signals:
     void tofall();
     void updateHP(int HP);
     void over();
-    void forceRel();
+    void forceRel(QPointF);
     void ATKsign();
     void setshow();
     void lose();
@@ -112,6 +112,8 @@ private:
     setwindow *s;
     endwindow *e;
     bool calculated = false;
-    static int roundCount;
+    static int roundCount;    
+    bool addWeatherStone = false;
+    bool CDoverProcessing = false;
 };
 #endif // MAINWINDOW_H

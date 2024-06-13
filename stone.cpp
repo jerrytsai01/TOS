@@ -9,7 +9,7 @@
 #include <QApplication>
 #include <QDebug>
 #include <QTimer>
-// 构造函数实现
+// ??啣???
 stone::stone(int type, int X, int Y, QGraphicsScene *scene, QObject *parent)
     : QObject(parent), type(static_cast<Attribute>(type)) {
     setPos(X,Y);
@@ -31,27 +31,17 @@ stone::stone(int type, int X, int Y, QGraphicsScene *scene, QObject *parent)
     cdIcon->setVisible(false);
 }
 
-// 获取符石类型的方法实现
+// ?瑕?蝚衣蝐餃??瘜???
 Attribute stone::getType() const {
     return type;
 }
 
-// 获取符石类型的整数值
+// ?瑕?蝚衣蝐餃???啣?
 int stone::getTypeAsInt() const {
     return static_cast<int>(type);
 }
 // mouse event
 void stone::mousePressEvent(QGraphicsSceneMouseEvent *event) {
-/*
-    pressed = true;
-    oldGridPos.setX(floor(pos().x() / 90) * 90);
-    oldGridPos.setY(510 + floor((pos().y() - 510) / 90) * 90);
-    mousePoint = event->scenePos();
-    //qDebug() << "Mouse Pressed at Scene Position:" << mousePoint;
-    pressTimer->start(10);
-    cdBar->setVisible(true);
-    cdIcon->setVisible(true);
-    */
     if(MainWindow::moveTime){
             pressed = true;
             oldGridPos.setX(floor(pos().x() / 90) * 90);
@@ -64,43 +54,26 @@ void stone::mousePressEvent(QGraphicsSceneMouseEvent *event) {
         }
 }
 void stone::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
-    qDebug() << "mouseReleaseEvent triggered";
-    pressed = false;
-    pressTimer->stop(); // Stop the timer
-    pressTimeCount = 1000;
-    forceRel = false;
-    //qDebug() <<"Release";
-    // Calculate the grid position for the stone
-    int newX = qRound(pos().x() / 90) * 90 + 45; // Round to the nearest multiple of 90 (grid size) and add offset for center
-    int newY = 510 + qRound((pos().y() - 510) / 90) * 90 + 45; // Round to the nearest multiple of 90 (grid size) and add offset for center
-    setPos(newX - 45, newY - 45); // Update stone position to the center of the grid
-    emit CDover();
-    //qDebug() << "Stone dropped at:" << QPointF(newX, newY);
-    QGraphicsItem::mouseReleaseEvent(event); // Call the base class implementation
-    // Ensure cdBar is reset or hidden
-    cdBar->setVisible(false);
-    cdIcon->setVisible(false);
-    cdBar->updateBar(1.0f);
-}
-
-void stone::emitTimer()
-{
-    if(!pressed)
+    if(pressed){
+        qDebug() << "mouseReleaseEvent triggered";
+        pressed = false;
+        pressTimer->stop(); // Stop the timer
         pressTimeCount = 0;
-    else{
-        pressTimeCount++;
+        forceRel = false;
+        //qDebug() <<"Release";
+        // Calculate the grid position for the stone
+        int newX = qRound(pos().x() / 90) * 90 + 45; // Round to the nearest multiple of 90 (grid size) and add offset for center
+        int newY = 510 + qRound((pos().y() - 510) / 90) * 90 + 45; // Round to the nearest multiple of 90 (grid size) and add offset for center
+        setPos(newX - 45, newY - 45); // Update stone position to the center of the grid
+        emit CDover();
+        //qDebug() << "Stone dropped at:" << QPointF(newX, newY);
+        QGraphicsItem::mouseReleaseEvent(event); // Call the base class implementation
+        // Ensure cdBar is reset or hidden
+        cdBar->setVisible(false);
+        cdIcon->setVisible(false);
+        cdBar->updateBar(1.0f);
     }
-    // Calculate remaining time fraction
-    float remainingTimeFraction = static_cast<float>(1000 - pressTimeCount) / 1000.0f;
-    cdBar->updateBar(remainingTimeFraction); // Update the cdBar
 }
-
-void stone::forceRelease()
-{
-    qDebug() << "forceReleaseEvent triggered";
-    pressTimeCount = 1000;
-}
-
 void stone::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
     // Update the width of the timer rectangle
     //qDebug() << "move";
@@ -134,8 +107,8 @@ void stone::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
         pressTimeCount = 0;
         forceRel = false;
         // Calculate the grid position for the stone
-        int newX = floor(pos().x() / 90) * 90 + 45; // Round to the nearest multiple of 90 (grid size) and add offset for center
-        int newY = 510 + floor((pos().y() - 510) / 90) * 90 + 45; // Round to the nearest multiple of 90 (grid size) and add offset for center
+        int newX = qRound(pos().x() / 90) * 90 + 45; // Round to the nearest multiple of 90 (grid size) and add offset for center
+        int newY = 510 + qRound((pos().y() - 510) / 90) * 90 + 45; // Round to the nearest multiple of 90 (grid size) and add offset for center
         setPos(newX - 45, newY - 45); // Update stone position to the center of the grid
         //qDebug() << "Stone dropped at:" << QPointF(newX, newY);
         emit CDover();
@@ -146,6 +119,27 @@ void stone::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
         cdBar->updateBar(1.0f);
     }
 }
+
+void stone::forceRelease(QPointF signPos)
+{
+    if(signPos == oldGridPos){
+        qDebug() << "forceReleaseEvent triggered";
+        pressTimeCount = 1000;
+    }
+}
+
+void stone::emitTimer()
+{
+    if(!pressed)
+        pressTimeCount = 0;
+    else{
+        pressTimeCount++;
+    }
+    // Calculate remaining time fraction
+    float remainingTimeFraction = static_cast<float>(1000 - pressTimeCount) / 1000.0f;
+    cdBar->updateBar(remainingTimeFraction); // Update the cdBar
+}
+
 void stone::skin(int type, bool weather, bool burn)
 {
     if(weather){

@@ -15,6 +15,7 @@ public:
 public slots:
     void move();
 private:
+    qreal distance;
     qreal angle;
     qreal speed;
     QPointF target;  // 目标位置

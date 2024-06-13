@@ -86,7 +86,9 @@ void loginwindow::startGame()
 
 void loginwindow::reset(){
     for(size_t  i=0;i<t.size();i++){
+        scene->removeItem(t[i]);
         delete t[i];
     }
-    characters = {};
+    t.clear();
+    characters.clear();
 }
